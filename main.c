@@ -13,6 +13,14 @@ void delay(hword val) {
     while (val != gba_register(TMR_COUNT0));
 }
 
+void wait_until_vblank(void) {
+    while ((gba_register(LCD_STATUS) & 1) == 0);
+}
+
+void wait_until_vblank_end(void) {
+    while ((gba_register(LCD_STATUS) & 1));
+}
+
 int main(void)
 {
     // 画面を初期化
@@ -22,11 +30,12 @@ int main(void)
     gba_register(TMR_CTRL0) = TMR_ENABLE + TMR_1024CLOCK;
 
     while (1) {
+        wait_until_vblank();
         draw_step();
         ball_step();
         racket_step();
         game_step();
         block_step();
-        delay(INTERVAL);
+        wait_until_vblank_end();
     }
 }
