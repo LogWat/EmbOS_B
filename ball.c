@@ -52,6 +52,14 @@ void ball_step(void)
         break;
     case CLEAR:
         draw_box(&b, x, y, COLOR_BLACK);
-        break;    
+        break;
+    case HOME:
+        break;
+    case STOP:
+        break;
+    case SETTING:
+        break;
+    case SCORE:
+        break;
     }
 }

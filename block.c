@@ -134,5 +134,13 @@ void block_step(void)
             df = 0;
         }
         break;
+    case HOME:
+        break;
+    case STOP:
+        break;
+    case SETTING:
+        break;
+    case SCORE:
+        break;
     }
 }
