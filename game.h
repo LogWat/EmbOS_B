@@ -1,4 +1,4 @@
-enum state {START, RUNNING, DEAD, RESTART, CLEAR};
+enum state {START, RUNNING, DEAD, RESTART, CLEAR, HOME, STOP, MODSELECT, SETTING, SDSELECT, SCORE};
 
 extern void game_step(void);             // 1ティックの動作を行なう．
 extern enum state game_get_state(void);  // 今の状態を問い合わせる．
