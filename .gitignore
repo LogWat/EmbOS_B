@@ -1,3 +1,6 @@
 .vscode/*
 ._*.c
 ._*.h
+*.o
+*.bin
+*.out

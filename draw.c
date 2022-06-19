@@ -63,7 +63,7 @@ void draw_step() {
             end_flag = 1;
         }
         break;
-    case CLEAR:0
+    case CLEAR:
         if (!end_flag) {
             draw_string(fb, COLOR_WHITE, "Game Clear", LCD_WIDTH / 2 - FONT_SIZE * 5, LCD_HEIGHT / 2);
             draw_string(fb, COLOR_WHITE, "Press START to restart", LCD_WIDTH / 2 - FONT_SIZE * 11, LCD_HEIGHT / 2 + FONT_SIZE);
