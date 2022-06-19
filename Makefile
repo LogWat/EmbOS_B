@@ -1,18 +1,18 @@
-AS     = as-arm
-CC     = gcc-arm
-LIBGCC = `gcc-arm -print-libgcc-file-name`
+AS     = arm-none-eabi-as
+CC     = arm-none-eabi-gcc
+LIBGCC = `arm-none-eabi-gcc -print-libgcc-file-name`
 CFLAGS = -Wall -O -fno-builtin -fomit-frame-pointer -finhibit-size-directive \
 	-fno-ident
 
-all: racket.bin
+all: test.bin
 
-racket.bin: ball.o box.o crt.o main.o racket.o game.o block.o draw.o
-	ld-arm -o racket.out -T gcc.ls \
-	  crt.o ball.o box.o main.o racket.o game.o block.o draw.o ${LIBGCC}
-	objcopy-arm -O binary racket.out racket.bin
+test.bin: ball.o box.o crt.o main.o racket.o game.o block.o draw.o
+	arm-none-eabi-ld -o test.out -T gcc.ls \
+	  crt.o ball.o box.o main.o racket.o game.o block.o draw.o
+	arm-none-eabi-objcopy -O binary test.out test.bin
 
 clean:
-	rm -f *.o *.s *.out *.bin
+	rm -f *.o *.s *.out
 
 ball.o: gba.h box.h ball.h game.h
 box.o: gba.h box.h
