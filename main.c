@@ -31,10 +31,10 @@ int main(void)
 
     while (1) {
         wait_until_vblank();
+        game_step();
         draw_step();
         ball_step();
         racket_step();
-        game_step();
         block_step();
         wait_until_vblank_end();
     }

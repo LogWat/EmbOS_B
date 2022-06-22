@@ -6,42 +6,60 @@
 #define COLOR_GRAY      BGR(15, 15, 15)
 #define COLOR_BLACK     0
 
-static enum state current_state = START;  // 現在の状態
-static enum state game_difficulty = EASY; // ゲームの難易度
-static int auto_play = 0;                // 自動プレイフラグ
-static int optidx = 0;                   // オプション番号 (選択肢のどれを選んでいるか)
+static enum state prev_state = START;            // 前回のstate(描写用)
+static enum state current_state = START;        // 現在の状態
+static enum song_difficulty prev_game_difficulty = EASY;  // 前回のgame_difficulty(描写用)
+static enum song_difficulty game_difficulty = EASY;       // ゲームの難易度
+static int prev_auto_play = 0;                  // 前回のauto_play(描写用)
+static int auto_play = 0;                       // 自動プレイフラグ
+static int optidx = 0;                          // オプション番号 (選択肢のどれを選んでいるか)
+static int prev_optidx = 0;                     // 前回のオプション番号 (選択肢のどれを選んでいたか)
 
 static void options_slct(
     int num_of_options,
     int key
 ) {
     if (!(key & KEY_DOWN)) {
-        screen_changed_flag_set();
         optidx = (optidx + 1) % num_of_options;
     }
     if (!(key & KEY_UP)) {
-        screen_changed_flag_set();
         optidx = (optidx + num_of_options - 1) % num_of_options;
     }
 }
 
 enum state game_get_state(void) { return current_state; }
+enum state game_get_prev_state(void) { return prev_state; }
 void game_set_state(enum state new_state) {
     current_state = new_state;
 }
-enum state game_get_difficulty(void) { return game_difficulty; }
-void game_set_difficulty(enum state new_difficulty) {
+void game_set_prev_state(enum state new_state) {
+    prev_state = new_state;
+}
+enum song_difficulty game_get_difficulty(void) { return game_difficulty; }
+enum song_difficulty game_get_prev_difficulty(void) { return prev_game_difficulty; }
+void game_set_difficulty(enum song_difficulty new_difficulty) {
     game_difficulty = new_difficulty;
+}
+void game_set_prev_difficulty(enum song_difficulty new_difficulty) {
+    prev_game_difficulty = new_difficulty;
 }
 
 void auto_play_toggle(void) {
     auto_play = !auto_play;
 }
+void prev_auto_play_toggle(void) {
+    prev_auto_play = !prev_auto_play;
+}
 int get_autoplay(void) {
     return auto_play;
 }
+int get_prev_autoplay(void) {
+    return prev_auto_play;
+}
 
 int get_optidx(void) { return optidx; }
+int get_prev_optidx(void) { return prev_optidx; }
+void set_prev_optidx(int new_optidx) { prev_optidx = new_optidx; }
 
 void game_step(void)
 {
@@ -57,20 +75,24 @@ void game_step(void)
         // cheat code
         if (!(key & KEY_SELECT)) {
             game_set_state(STOP);
+            screen_changed_flag_set();
         }
         break;
     case DEAD:
         if (!(key & KEY_START)) {
             game_set_state(RESTART);
+            screen_changed_flag_set();
         }
         break;
     case RESTART:
         /* 次のティックはRUNNING状態にする．*/
         game_set_state(RUNNING);
+        screen_changed_flag_set();
         break;
     case CLEAR:
         if (!(key & KEY_START)) {
             game_set_state(RESTART);
+            screen_changed_flag_set();
         }
         break;
     case HOME:
@@ -79,6 +101,7 @@ void game_step(void)
             switch (optidx) {
             case 0:
                 game_set_state(SETTING); // 設定画面へ
+                screen_changed_flag_set();
                 optidx = 0;
                 break;
             case 1:
@@ -99,10 +122,10 @@ void game_step(void)
                 break;
             case 3:
                 game_set_state(RUNNING); // ゲームを開始する
+                screen_changed_flag_set();
                 optidx = 0;
                 break;
             }
-            screen_changed_flag_set();
         }
         break;
     case STOP:
