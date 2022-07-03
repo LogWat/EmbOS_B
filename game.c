@@ -15,14 +15,16 @@ static int auto_play = 0;                       // 自動プレイフラグ
 static int optidx = 0;                          // オプション番号 (選択肢のどれを選んでいるか)
 static int prev_optidx = 0;                     // 前回のオプション番号 (選択肢のどれを選んでいたか)
 
+static int prev_key;
+
 static void options_slct(
     int num_of_options,
     int key
 ) {
-    if (!(key & KEY_DOWN)) {
+    if ((prev_key & KEY_DOWN) && !(key & KEY_DOWN)) {
         optidx = (optidx + 1) % num_of_options;
     }
-    if (!(key & KEY_UP)) {
+    if ((prev_key & KEY_UP) && !(key & KEY_UP)) {
         optidx = (optidx + num_of_options - 1) % num_of_options;
     }
 }
@@ -97,7 +99,7 @@ void game_step(void)
         break;
     case HOME:
         options_slct(4, key);
-        if (!(key & KEY_A)) {
+        if ((prev_key & KEY_A) && !(key & KEY_A)) {
             switch (optidx) {
             case 0:
                 game_set_state(SETTING); // 設定画面へ
@@ -135,5 +137,5 @@ void game_step(void)
     case SCORE:
         break;
     }
-
+    prev_key = key;
 }
