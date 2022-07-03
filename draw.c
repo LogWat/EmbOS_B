@@ -121,11 +121,10 @@ static void draw_autoplay_status(void) {
         }
     }
     // 現在の自動プレイ状態を描写
+    draw_string(fb, COLOR_WHITE, "Auto Play: ", LCD_WIDTH / 2 - FONT_SIZE * 10, LCD_HEIGHT / 4 + FONT_SIZE + 4);
     if (!get_autoplay()) {
-        draw_string(fb, COLOR_WHITE, "Auto Play: ", LCD_WIDTH / 2 - FONT_SIZE * 10, LCD_HEIGHT / 4 + FONT_SIZE + 4);
         draw_string(fb, COLOR_BLUE, "OFF", LCD_WIDTH / 2 + FONT_SIZE * 5, LCD_HEIGHT / 4 + FONT_SIZE + 4);
     } else {
-        draw_string(fb, COLOR_WHITE, "Auto Play: ", LCD_WIDTH / 2 - FONT_SIZE * 10, LCD_HEIGHT / 4 + FONT_SIZE + 4);
         draw_string(fb, COLOR_GREEN, "ON", LCD_WIDTH / 2 + FONT_SIZE * 5, LCD_HEIGHT / 4 + FONT_SIZE + 4);
     }
 }
