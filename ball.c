@@ -1,7 +1,7 @@
 #include "gba.h"
 #include "box.h"
-#include "ball.h"
 #include "game.h"
+#include "ball.h"
 
 #define COLOR_WHITE     BGR(31, 31, 31)
 #define COLOR_BLACK     BGR(0, 0, 0)
