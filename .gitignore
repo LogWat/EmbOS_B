@@ -4,3 +4,6 @@
 *.o
 *.bin
 *.out
+*.exe
+*.wav
+*.mp3
