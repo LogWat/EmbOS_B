@@ -21,3 +21,10 @@ racket.o: gba.h box.h ball.h racket.h game.h
 game.o: gba.h game.h
 block.o: gba.h ball.h box.h block.h game.h
 draw.o: gba.h 8x8.til game.h
+
+sound: dmapcm.o
+	arm-none-eabi-ld -o sound.out -T gcc.ls \
+	  dmapcm.o
+	arm-none-eabi-objcopy -O binary sound.out sound.bin
+
+dmapcm.o: gba.h dmapcm.h
