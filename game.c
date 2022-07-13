@@ -17,6 +17,8 @@ static int prev_optidx = 0;                     // 前回のオプション番�
 
 static int prev_key;
 
+static int rand_seed;
+
 static void options_slct(
     int num_of_options,
     int key
@@ -62,6 +64,20 @@ int get_prev_autoplay(void) {
 int get_optidx(void) { return optidx; }
 int get_prev_optidx(void) { return prev_optidx; }
 void set_prev_optidx(int new_optidx) { prev_optidx = new_optidx; }
+
+void rand_countup(void) {
+    rand_seed++;
+}
+
+int getrand(void) {
+    rand_seed = rand_seed * 112 + 7777;
+    return (rand_seed / 100) % 100;
+}
+
+int getrandseed(void) {
+    return rand_seed;
+}
+
 
 void game_step(void)
 {

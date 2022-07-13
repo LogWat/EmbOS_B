@@ -16,3 +16,6 @@ extern int get_prev_autoplay(void); // 前の自動プレイフラグを問い�
 extern int get_optidx(void); // オプションインデックスを問い合わせる．
 extern int get_prev_optidx(void); // 前回のオプションインデックスを問い合わせる．
 extern void set_prev_optidx(int); // 前回のオプションインデックスを変更する．
+extern void rand_countup(void); // 乱数カウンタを増やす．
+extern int getrand(void); // 乱数を問い合わせる．
+extern int getrandseed(void); // 乱数シードを問い合わせる．
