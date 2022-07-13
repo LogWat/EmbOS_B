@@ -2,12 +2,13 @@
 #include "box.h"
 #include "game.h"
 #include "ball.h"
+#include "draw.h"
 
 #define COLOR_WHITE     BGR(31, 31, 31)
 #define COLOR_BLACK     BGR(0, 0, 0)
 
 static fix dx = (2 << 8), dy = (2 << 8);        /* ボールの現在の速度 */
-static struct box b = {0, 35, 10, 10};          /* ボールの箱の現在の位置 */
+static struct box b = {0, 55, 10, 10};          /* ボールの箱の現在の位置 */
 
 fix ball_get_dy(void) { return dy; }
 void ball_set_dy(fix new_dy) { dy = new_dy; }
@@ -43,6 +44,7 @@ void ball_step(void)
         } else if (y > LCD_HEIGHT - b.height) {
             y = LCD_HEIGHT - b.height;
             dy = -dy;
+            screen_changed_flag_set();
             game_set_state(DEAD);
         }
         move_box(&b, x, y, COLOR_WHITE);
@@ -51,7 +53,7 @@ void ball_step(void)
         break;
     case RESTART:
         move_box(&b, x, y, COLOR_BLACK);
-        x = 0; y = 35;
+        x = 0; y = 55;
         dx = (2 << 8); dy = (2 << 8);
         move_box(&b, x, y, COLOR_WHITE);
         break;

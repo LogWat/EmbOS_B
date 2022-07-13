@@ -3,6 +3,7 @@
 #include "game.h"
 #include "box.h"
 #include "block.h"
+#include "draw.h"
 
 #define COLOR_WHITE     BGR(31, 31, 31)
 #define COLOR_BLACK     BGR(0, 0, 0)
@@ -10,7 +11,7 @@
 #define BLOCK_ROWS      2
 #define BLOCK_WIDTH     (LCD_WIDTH / BLOCK_COLS)
 #define BLOCK_HEIGHT    10
-#define BLOCK_TOP      0
+#define BLOCK_TOP      20
 
 static struct box boxes[BLOCK_ROWS][BLOCK_COLS];
 static char blocks[BLOCK_ROWS][BLOCK_COLS];
@@ -107,6 +108,7 @@ void block_step(void)
             }
         }
         if (!num_blocks) {
+            screen_changed_flag_set();
             game_set_state(CLEAR);
         }
         break;

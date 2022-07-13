@@ -17,9 +17,9 @@ static void bounce_angle() {
     int v = (dx * dx + dy * dy);
     fix new_ball_dx, new_ball_dy = 0;
     if (b->x + b->width/2 > r.x + r.width/2) {
-        new_ball_dx = ball_dx + (((b->x + b->width / 2) - (r.x + r.width / 2)) << 2);
+        new_ball_dx = ball_dx + (((b->x + b->width / 2) - (r.x + r.width / 2)) << 3);
     } else {
-        new_ball_dx = ball_dx - (((r.x + r.width / 2) - (b->x + b->width / 2)) << 2);
+        new_ball_dx = ball_dx - (((r.x + r.width / 2) - (b->x + b->width / 2)) << 3);
     }
     new_ball_dy = ball_dy;
     ball_set_dx(new_ball_dx);

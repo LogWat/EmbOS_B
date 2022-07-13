@@ -157,8 +157,14 @@ void draw_step() {
         break;
     case DEAD:
         if (screen_changed) {
-            draw_string(fb, COLOR_WHITE, "Game Over", LCD_WIDTH / 2 - FONT_SIZE * 5, LCD_HEIGHT / 2);
-            draw_string(fb, COLOR_WHITE, "Press START to restart", LCD_WIDTH / 2 - FONT_SIZE * 11, LCD_HEIGHT / 2 + FONT_SIZE);
+            draw_string(fb, COLOR_RED, "Game Over", LCD_WIDTH / 2 - FONT_SIZE * 5, LCD_HEIGHT / 2);
+            draw_string(fb, COLOR_GREEN, "Back To HOME", LCD_WIDTH / 2 - FONT_SIZE * 6, LCD_HEIGHT / 2 + FONT_SIZE);
+            draw_string(fb, COLOR_BLUE, "Continue", LCD_WIDTH / 2 - FONT_SIZE * 4, LCD_HEIGHT / 2 + FONT_SIZE * 2);
+            opt_slct(2);
+        }
+        if (get_optidx() != get_prev_optidx()) {
+            opt_slct(2);
+            set_prev_optidx(get_optidx());
         }
         break;
     case CLEAR:

@@ -92,14 +92,23 @@ void game_step(void)
     case RUNNING:
         // cheat code
         if (!(key & KEY_SELECT)) {
-            game_set_state(STOP);
+            game_set_state(CLEAR);
             screen_changed_flag_set();
         }
         break;
     case DEAD:
-        if (!(key & KEY_START)) {
-            game_set_state(RESTART);
-            screen_changed_flag_set();
+        options_slct(2, key);
+        if ((prev_key & KEY_A) && !(key & KEY_A)) {
+            switch (optidx) {
+            case 0:
+                game_set_state(HOME);
+                screen_changed_flag_set();
+                break;
+            case 1:
+                game_set_state(RESTART);
+                screen_changed_flag_set();
+                break;
+            }
         }
         break;
     case RESTART:
