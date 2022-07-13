@@ -24,10 +24,10 @@ static void options_slct(
     int key
 ) {
     if ((prev_key & KEY_DOWN) && !(key & KEY_DOWN)) {
-        optidx = (optidx + 1) % num_of_options;
+        optidx = (++optidx > num_of_options - 1) ? 0 : optidx;
     }
     if ((prev_key & KEY_UP) && !(key & KEY_UP)) {
-        optidx = (optidx + num_of_options - 1) % num_of_options;
+        optidx = (--optidx < 0) ? num_of_options - 1 : optidx;
     }
 }
 

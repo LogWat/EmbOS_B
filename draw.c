@@ -64,18 +64,18 @@ void draw_number(hword *ptr, hword color, int num, int x, int y)
     draw_string(ptr, color, str, x, y);
 }
 
-static void opt_slct(int num_of_options) {
+static void opt_slct(int num_of_options, int base_y, int interval) {
     if (num_of_options == 0) {
         return;
     }
     hword *fb = (hword *)VRAM;
     int i;
-    int h = LCD_HEIGHT / 4;
+    int h = base_y;
     for (i = 0; i < num_of_options; i++) {
         if (i == get_optidx()) {
-            draw_string(fb, COLOR_WHITE, "->", 20, h + (FONT_SIZE + 4) * (i+1));
+            draw_string(fb, COLOR_WHITE, "->", 20, h + interval * (i+1));
         } else if (i == get_prev_optidx()) {
-            draw_string(fb, COLOR_BLACK, "->", 20, h + (FONT_SIZE + 4) * (i+1));
+            draw_string(fb, COLOR_BLACK, "->", 20, h + interval * (i+1));
         }
     }
 }
@@ -158,12 +158,12 @@ void draw_step() {
     case DEAD:
         if (screen_changed) {
             draw_string(fb, COLOR_RED, "Game Over", LCD_WIDTH / 2 - FONT_SIZE * 5, LCD_HEIGHT / 2);
-            draw_string(fb, COLOR_GREEN, "Back To HOME", LCD_WIDTH / 2 - FONT_SIZE * 6, LCD_HEIGHT / 2 + FONT_SIZE);
-            draw_string(fb, COLOR_BLUE, "Continue", LCD_WIDTH / 2 - FONT_SIZE * 4, LCD_HEIGHT / 2 + FONT_SIZE * 2);
-            opt_slct(2);
+            draw_string(fb, COLOR_WHITE, "Back To HOME", LCD_WIDTH / 2 - FONT_SIZE * 6, LCD_HEIGHT / 2 + (FONT_SIZE + 4));
+            draw_string(fb, COLOR_WHITE, "Continue", LCD_WIDTH / 2 - FONT_SIZE * 4, LCD_HEIGHT / 2 + (FONT_SIZE + 4) * 2);
+            opt_slct(2, LCD_HEIGHT / 2, (FONT_SIZE + 4));
         }
         if (get_optidx() != get_prev_optidx()) {
-            opt_slct(2);
+            opt_slct(2, LCD_HEIGHT / 2, (FONT_SIZE + 4));
             set_prev_optidx(get_optidx());
         }
         break;
@@ -181,10 +181,10 @@ void draw_step() {
             draw_string(fb, COLOR_WHITE, "Difficulty: ", LCD_WIDTH / 2 - FONT_SIZE * 10, LCD_HEIGHT / 4 + (FONT_SIZE+4) * 2);
             draw_difficulty();
             draw_string(fb, COLOR_WHITE, "Play!", LCD_WIDTH / 2 - FONT_SIZE * 2, LCD_HEIGHT / 4 +  (FONT_SIZE+4) * 3);
-            opt_slct(3);
+            opt_slct(3, LCD_HEIGHT / 4, FONT_SIZE + 4);
         }
         if (get_optidx() != get_prev_optidx()) {
-            opt_slct(3);
+            opt_slct(3, LCD_HEIGHT / 4, FONT_SIZE + 4);
             set_prev_optidx(get_optidx());
         }
         if (game_get_difficulty() != game_get_prev_difficulty()) {
