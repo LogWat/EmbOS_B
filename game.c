@@ -118,7 +118,7 @@ void game_step(void)
         break;
     case CLEAR:
         if (!(key & KEY_START)) {
-            game_set_state(RESTART);
+            game_set_state(HOME);
             screen_changed_flag_set();
         }
         break;

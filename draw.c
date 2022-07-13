@@ -169,8 +169,8 @@ void draw_step() {
         break;
     case CLEAR:
         if (screen_changed) {
-            draw_string(fb, COLOR_WHITE, "Game Clear", LCD_WIDTH / 2 - FONT_SIZE * 5, LCD_HEIGHT / 2);
-            draw_string(fb, COLOR_WHITE, "Press START to restart", LCD_WIDTH / 2 - FONT_SIZE * 11, LCD_HEIGHT / 2 + FONT_SIZE);
+            draw_string(fb, COLOR_GREEN, "Game Clear!!", LCD_WIDTH / 2 - FONT_SIZE * 5, LCD_HEIGHT / 2);
+            draw_string(fb, COLOR_WHITE, "Press START to back to HOME", LCD_WIDTH / 2 - FONT_SIZE * 14, LCD_HEIGHT / 2 + FONT_SIZE + 4);
         }
         break;
     case RESTART:
