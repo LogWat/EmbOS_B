@@ -98,18 +98,13 @@ void game_step(void)
         }
         break;
     case HOME:
-        options_slct(4, key);
+        options_slct(3, key);
         if ((prev_key & KEY_A) && !(key & KEY_A)) {
             switch (optidx) {
             case 0:
-                game_set_state(SETTING); // 設定画面へ
-                screen_changed_flag_set();
-                optidx = 0;
-                break;
-            case 1:
                 auto_play_toggle();
                 break;
-            case 2:
+            case 1:
                 switch (game_get_difficulty()) {
                 case EASY:
                     game_set_difficulty(NORMAL);
@@ -122,7 +117,7 @@ void game_step(void)
                     break;
                 }
                 break;
-            case 3:
+            case 2:
                 game_set_state(RUNNING); // ゲームを開始する
                 screen_changed_flag_set();
                 optidx = 0;

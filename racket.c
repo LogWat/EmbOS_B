@@ -10,16 +10,20 @@
 static int dx = 5, dy = 0;            /* ラケットの現在の速度 */
 static struct box r = {LCD_WIDTH - 100, LCD_HEIGHT - 30, 30, 5};          /* ラケットの箱の現在の位置 */
 
-// 疑似平方根(整数のみ)
-static int sqrt(int x) {
-    int i, j;
-    for (i = 0, j = 1; i < x; i++) {
-        if (j * j <= x)
-            j++;
-        else
-            break;
+static void bounce_angle() {
+    struct box *b = ball_get_box();
+    fix ball_dx = ball_get_dx(), ball_dy = ball_get_dy(); // fix: 整数部24bit, 小数部8bit
+    int dx = round_fix(ball_dx), dy = round_fix(ball_dy);
+    int v = (dx * dx + dy * dy);
+    fix new_ball_dx, new_ball_dy = 0;
+    if (b->x + b->width/2 > r.x + r.width/2) {
+        new_ball_dx = ball_dx + (((b->x + b->width / 2) - (r.x + r.width / 2)) << 2);
+    } else {
+        new_ball_dx = ball_dx - (((r.x + r.width / 2) - (b->x + b->width / 2)) << 2);
     }
-    return j - 1;
+    new_ball_dy = ball_dy;
+    ball_set_dx(new_ball_dx);
+    ball_set_dy(new_ball_dy);
 }
 
 void racket_step(void) {
@@ -41,14 +45,9 @@ void racket_step(void) {
             x += dx;
         }
         struct box *b = ball_get_box();
-        int bv = ball_get_dx() * ball_get_dx() + ball_get_dy() * ball_get_dy();
         if (cross(&r, b)) {
+            bounce_angle();
             ball_set_dy(ball_get_dy() < 0 ? ball_get_dy() : -ball_get_dy());
-            if (b->x + b->width/2 < r.x + r.width/2) {
-                ball_set_dx(ball_get_dx() - (r.x + r.width/2 - b->x - b->width/2)/6);
-            } else if (b->x + b->width/2 > r.x + r.width/2) {
-                ball_set_dx(ball_get_dx() + (b->x + b->width/2 - r.x - r.width/2)/6);
-            }
         }
         move_box(&r, x, y, COLOR_WHITE);
         break;

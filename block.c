@@ -95,15 +95,15 @@ void block_step(void)
         delete(ball->x + ball->width, ball->y + ball->height);
 
         if (updown) {
-            ball_dy = ball_get_dy();
+            ball_dy = round_fix(ball_get_dy());
             if ((ball_dy < 0 && updown > 0) || (ball_dy > 0 && updown < 0)) {
-                ball_set_dy(ball_dy * -1);
+                ball_set_dy(-ball_get_dy());
             }
         }
         if (leftright) {
-            ball_dx = ball_get_dx();
+            ball_dx = round_fix(ball_get_dx());
             if ((ball_dx < 0 && leftright > 0) || (ball_dx > 0 && leftright < 0)) {
-                ball_set_dx(ball_dx * -1);
+                ball_set_dx(-ball_get_dx());
             }
         }
         if (!num_blocks) {
