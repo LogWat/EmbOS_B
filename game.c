@@ -65,10 +65,12 @@ int get_optidx(void) { return optidx; }
 int get_prev_optidx(void) { return prev_optidx; }
 void set_prev_optidx(int new_optidx) { prev_optidx = new_optidx; }
 
+// main関数によって常時カウントアップされている
 void rand_countup(void) {
     rand_seed++;
 }
 
+// 疑似乱数を取得する
 int getrand(void) {
     rand_seed = rand_seed * 112 + 7777;
     return (rand_seed / 100) % 100;
