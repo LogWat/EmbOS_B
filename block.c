@@ -7,15 +7,38 @@
 
 #define COLOR_WHITE     BGR(31, 31, 31)
 #define COLOR_BLACK     BGR(0, 0, 0)
+#define COLOR_RED       BGR(31, 0, 0)
+#define COLOR_GREEN     BGR(0, 31, 0)
+#define COLOR_BLUE      BGR(0, 0, 31)
+#define COLOR_YELLOW    BGR(31, 31, 0)
+#define COLOR_CYAN      BGR(0, 31, 31)
+#define COLOR_PURPLE    BGR(31, 0, 31)
 #define BLOCK_COLS      10
 #define BLOCK_ROWS      2
 #define BLOCK_WIDTH     (LCD_WIDTH / BLOCK_COLS)
 #define BLOCK_HEIGHT    10
 #define BLOCK_TOP      20
 
-static struct box boxes[BLOCK_ROWS][BLOCK_COLS];
-static char blocks[BLOCK_ROWS][BLOCK_COLS];
+static enum btype block_type[BLOCK_COLS][BLOCK_ROWS]; // ブロックタイプ
+static struct box boxes[BLOCK_ROWS][BLOCK_COLS];      // ブロックの位置
+static char blocks[BLOCK_ROWS][BLOCK_COLS];           // ブロックの表示フラグ
 int num_blocks;
+
+static int vel_flag = 0;                         // 速度変更フラグ
+void vel_toggle(void) { vel_flag = !vel_flag; }
+int get_vel_flag(void) { return vel_flag; }
+static int twice_flag = 0;                       // ボール数変更フラグ
+void twice_toggle(void) { twice_flag = !twice_flag; }
+int get_twice_flag(void) { return twice_flag; }
+static int width_flag = 0;                       // ラケット幅変更フラグ
+void width_toggle(void) { width_flag = !width_flag; }
+int get_width_flag(void) { return width_flag; }
+static int speed_flag = 0;                       // 速度変更フラグ
+void speed_toggle(void) { speed_flag = !speed_flag; }
+int get_speed_flag(void) { return speed_flag; }
+static int reverse_flag = 0;                     // 操作反転フラグ
+void reverse_toggle(void) { reverse_flag = !reverse_flag; }
+int get_reverse_flag(void) { return reverse_flag; }
 
 static int hit(int x, int y) {
     int i = x / BLOCK_WIDTH;
