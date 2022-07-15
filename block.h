@@ -1,7 +1,7 @@
-enum btype {DEFAULT, TWICE, WIDTH, SPEED, REVERSE, VEL};
+enum btype {DEFAULT, TWICE, WIDTH, SPEED, REVERSE, POS};
 extern void block_step(void);
-extern void vel_toggle(void);
-extern int get_vel_flag(void);
+extern void pos_toggle(void);
+extern int get_pos_flag(void);
 extern void twice_toggle(void);
 extern int get_twice_flag(void);
 extern void width_toggle(void);
