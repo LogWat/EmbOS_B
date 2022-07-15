@@ -70,10 +70,10 @@ void rand_countup(void) {
     rand_seed++;
 }
 
-// 疑似乱数を取得する
+// 疑似乱数を取得する (0~5)
 int getrand(void) {
     rand_seed = rand_seed * 112 + 7777;
-    return (rand_seed / 100) % 100;
+    return (rand_seed / 100) % 6; 
 }
 
 int getrandseed(void) {
@@ -89,7 +89,6 @@ void game_step(void)
         /* ゲーム準備状態 */
         /* 次のティックはRUNNING状態にする．*/
         game_set_state(RUNNING);
-        screen_changed_flag_set();
         break;
     case RUNNING:
         // cheat code
@@ -116,7 +115,6 @@ void game_step(void)
     case RESTART:
         /* 次のティックはRUNNING状態にする．*/
         game_set_state(RUNNING);
-        screen_changed_flag_set();
         break;
     case CLEAR:
         if (!(key & KEY_START)) {

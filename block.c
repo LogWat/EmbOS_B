@@ -14,7 +14,7 @@
 #define COLOR_CYAN      BGR(0, 31, 31)
 #define COLOR_PURPLE    BGR(31, 0, 31)
 #define BLOCK_COLS      10
-#define BLOCK_ROWS      2
+#define BLOCK_ROWS      3
 #define BLOCK_WIDTH     (LCD_WIDTH / BLOCK_COLS)
 #define BLOCK_HEIGHT    10
 #define BLOCK_TOP      20
@@ -71,39 +71,79 @@ static void delete(int x, int y) {
     draw_box(&boxes[j][i], boxes[j][i].x, boxes[j][i].y, COLOR_BLACK);
 }
 
+static void block_init() {
+    int i, j;
+    int rand_num;
+    for (i = 0; i < BLOCK_ROWS; i++) {
+        for (j = 0; j < BLOCK_COLS; j++) {
+            blocks[i][j] = '1';
+            boxes[i][j].x = j * BLOCK_WIDTH;
+            boxes[i][j].y = i * BLOCK_HEIGHT + BLOCK_TOP;
+            boxes[i][j].width = BLOCK_WIDTH;
+            boxes[i][j].height = BLOCK_HEIGHT;
+        }
+    }
+    num_blocks = BLOCK_ROWS * BLOCK_COLS;
+    all_flag_reset();
+
+    // block state define
+    switch (game_get_difficulty()) {
+    case EASY:
+        for (i = 0; i < BLOCK_ROWS; i++) {
+            for (j = 0; j < BLOCK_COLS; j++) {
+                rand_num = getrand();
+                if (rand_num > 2) block_type[i][j] = DEFAULT;
+                else if (rand_num >= 1) block_type[i][j] = TWICE;
+                else block_type[i][j] = WIDTH;
+                rand_countup();
+            }
+        }
+        break;
+    case NORMAL:
+        break;
+    case HARD:
+        break;
+    }
+
+    // block draw
+    for (i = 0; i < BLOCK_ROWS; i++) {
+        for (j = 0; j < BLOCK_COLS; j++) {
+            if (blocks[i][j] == '1') {
+                switch (block_type[i][j]) {
+                case DEFAULT:
+                    draw_box(&boxes[i][j], boxes[i][j].x, boxes[i][j].y, COLOR_WHITE);
+                    break;
+                case TWICE:
+                    draw_box(&boxes[i][j], boxes[i][j].x, boxes[i][j].y, COLOR_YELLOW);
+                    break;
+                case WIDTH:
+                    draw_box(&boxes[i][j], boxes[i][j].x, boxes[i][j].y, COLOR_CYAN);
+                    break;
+                case REVERSE:
+                    draw_box(&boxes[i][j], boxes[i][j].x, boxes[i][j].y, COLOR_PURPLE);
+                    break;
+                case SPEED:
+                    draw_box(&boxes[i][j], boxes[i][j].x, boxes[i][j].y, COLOR_GREEN);
+                    break;
+                case VEL:
+                    draw_box(&boxes[i][j], boxes[i][j].x, boxes[i][j].y, COLOR_RED);
+                    break;
+                }
+            }
+        }
+    }
+}
+
 void block_step(void)
 {
-    int i, j;
     int updown, leftright;
     struct box *ball;
     int ball_dx, ball_dy;
-    int df = 0;
     switch (game_get_state()) {
     case START:
-        for (i = 0; i < BLOCK_ROWS; i++) {
-            for (j = 0; j < BLOCK_COLS; j++) {
-                blocks[i][j] = '1';
-                boxes[i][j].x = j * BLOCK_WIDTH;
-                boxes[i][j].y = i * BLOCK_HEIGHT + BLOCK_TOP;
-                boxes[i][j].width = BLOCK_WIDTH;
-                boxes[i][j].height = BLOCK_HEIGHT;
-            }
-        }
-        num_blocks = BLOCK_ROWS * BLOCK_COLS;
-        df = 0;
-        all_flag_reset();
+        block_init();
         break;
     case RUNNING:
-        if (df == 0) {
-            for (i = 0; i < BLOCK_ROWS; i++) {
-                for (j = 0; j < BLOCK_COLS; j++) {
-                    if (blocks[i][j] == '1') {
-                        draw_box(&boxes[i][j], boxes[i][j].x, boxes[i][j].y, COLOR_WHITE);
-                    }
-                }
-            }
-            df = 1;
-        }
         updown = leftright = 0;
         ball = ball_get_box();
         if (hit(ball->x, ball->y)) {
@@ -147,27 +187,9 @@ void block_step(void)
     case DEAD:
         break;
     case RESTART:
-        for (i = 0; i < BLOCK_ROWS; i++) {
-            for (j = 0; j < BLOCK_COLS; j++) {
-                blocks[i][j] = '1';
-                boxes[i][j].x = j * BLOCK_WIDTH;
-                boxes[i][j].y = i * BLOCK_HEIGHT + BLOCK_TOP;
-                boxes[i][j].width = BLOCK_WIDTH;
-                boxes[i][j].height = BLOCK_HEIGHT;
-            }
-        }
-        num_blocks = BLOCK_ROWS * BLOCK_COLS;
-        df = 0;
-        all_flag_reset();
+        block_init();
+        break;
     case CLEAR:
-        if (df == 1) {
-            for (i = 0; i < BLOCK_ROWS; i++) {
-                for (j = 0; j < BLOCK_COLS; j++) {
-                    draw_box(&boxes[i][j], boxes[i][j].x, boxes[i][j].y, COLOR_BLACK);
-                }
-            }
-            df = 0;
-        }
         break;
     case HOME:
         break;
