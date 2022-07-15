@@ -40,6 +40,14 @@ static int reverse_flag = 0;                     // 操作反転フラグ
 void reverse_toggle(void) { reverse_flag = !reverse_flag; }
 int get_reverse_flag(void) { return reverse_flag; }
 
+void all_flag_reset(void) {
+    vel_flag = 0;
+    twice_flag = 0;
+    width_flag = 0;
+    speed_flag = 0;
+    reverse_flag = 0;
+}
+
 static int hit(int x, int y) {
     int i = x / BLOCK_WIDTH;
     int j = (y - BLOCK_TOP) / BLOCK_HEIGHT;
@@ -83,6 +91,7 @@ void block_step(void)
         }
         num_blocks = BLOCK_ROWS * BLOCK_COLS;
         df = 0;
+        all_flag_reset();
         break;
     case RUNNING:
         if (df == 0) {
@@ -149,6 +158,7 @@ void block_step(void)
         }
         num_blocks = BLOCK_ROWS * BLOCK_COLS;
         df = 0;
+        all_flag_reset();
     case CLEAR:
         if (df == 1) {
             for (i = 0; i < BLOCK_ROWS; i++) {

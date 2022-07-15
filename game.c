@@ -6,8 +6,8 @@
 #define COLOR_GRAY      BGR(15, 15, 15)
 #define COLOR_BLACK     0
 
-static enum state prev_state = START;            // 前回のstate(描写用)
-static enum state current_state = START;        // 現在の状態
+static enum state prev_state = HOME;            // 前回のstate(描写用)
+static enum state current_state = HOME;        // 現在の状態
 static enum song_difficulty prev_game_difficulty = EASY;  // 前回のgame_difficulty(描写用)
 static enum song_difficulty game_difficulty = EASY;       // ゲームの難易度
 static int prev_auto_play = 0;                  // 前回のauto_play(描写用)
@@ -86,10 +86,10 @@ void game_step(void)
     int key = gba_register(KEY_STATUS);
     switch (game_get_state()) {
     case START:
-        if (!(key & KEY_START)) {
-            game_set_state(HOME);
-            screen_changed_flag_set();
-        }
+        /* ゲーム準備状態 */
+        /* 次のティックはRUNNING状態にする．*/
+        game_set_state(RUNNING);
+        screen_changed_flag_set();
         break;
     case RUNNING:
         // cheat code
@@ -145,7 +145,7 @@ void game_step(void)
                 }
                 break;
             case 2:
-                game_set_state(RUNNING); // ゲームを開始する
+                game_set_state(START); // ゲームを開始する
                 screen_changed_flag_set();
                 optidx = 0;
                 break;

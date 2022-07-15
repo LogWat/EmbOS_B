@@ -1,4 +1,4 @@
-enum btype {NORMAL, TWISE, WIDTH, SPEED, REVERSE, VEL};
+enum btype {DEFAULT, TWISE, WIDTH, SPEED, REVERSE, VEL};
 extern void block_step(void);
 extern void vel_toggle(void);
 extern int get_vel_flag(void);
