@@ -33,7 +33,7 @@ int main(void)
         rand_countup();
         wait_until_vblank();
         game_step();
-        draw_step();
+        draw_step(); // 画面更新担当だから ball, racket, block よりも先に呼び出し
         ball_step();
         racket_step();
         block_step();

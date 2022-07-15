@@ -27,6 +27,10 @@ void ball_step(void)
 
     switch (game_get_state()) {
     case START:
+        move_box(&b, x, y, COLOR_BLACK);
+        x = 0; y = 55;
+        dx = (2 << 8); dy = (2 << 8);
+        move_box(&b, x, y, COLOR_WHITE);
         break;
     case RUNNING:
         dx_int = round_fix(dx), dy_int = round_fix(dy);

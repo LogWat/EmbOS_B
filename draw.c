@@ -149,8 +149,6 @@ void draw_step() {
     case START:
         if (screen_changed) {
             reset_screen();
-            draw_string(fb, COLOR_WHITE, "Press START to start", LCD_WIDTH / 2 - FONT_SIZE * 10, LCD_HEIGHT / 2);
-            screen_changed_flag_reset();
         }
         break;
     case RUNNING:
