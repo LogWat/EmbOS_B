@@ -17,7 +17,7 @@ static int prev_optidx = 0;                     // 前回のオプション番�
 
 static int prev_key;
 
-static int rand_seed;
+static int rand_seed = 41;
 
 static void options_slct(
     int num_of_options,
@@ -70,10 +70,10 @@ void rand_countup(void) {
     rand_seed++;
 }
 
-// 疑似乱数を取得する (0~5)
+// 疑似乱数を取得する (0～32767)
 int getrand(void) {
-    rand_seed = rand_seed * 112 + 7777;
-    return (rand_seed / 100) % 6; 
+    rand_seed = (rand_seed * 123) + 456;
+    return rand_seed % 32768;
 }
 
 int getrandseed(void) {

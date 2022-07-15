@@ -47,6 +47,7 @@ void all_flag_reset(void) {
     speed_flag = 0;
     reverse_flag = 0;
 }
+int twice_num = 2, width_num = 2, speed_num = 2, reverse_num = 2, vel_num = 2;
 
 static int hit(int x, int y) {
     int i = x / BLOCK_WIDTH;
@@ -87,23 +88,56 @@ static void block_init() {
     all_flag_reset();
 
     // block state define
-    switch (game_get_difficulty()) {
-    case EASY:
-        for (i = 0; i < BLOCK_ROWS; i++) {
-            for (j = 0; j < BLOCK_COLS; j++) {
-                rand_num = getrand();
-                if (rand_num > 2) block_type[i][j] = DEFAULT;
-                else if (rand_num >= 1) block_type[i][j] = TWICE;
-                else block_type[i][j] = WIDTH;
-                rand_countup();
+    int twice_row, width_row, speed_row, reverse_row, vel_row;
+    for (i = 0; i < BLOCK_ROWS; i++) {
+        twice_row = width_row = speed_row = reverse_row = vel_row = 1;
+        for (j = 0; j < BLOCK_COLS; j++) {
+            if (j < 2) {
+                block_type[i][j] = DEFAULT;
+                continue;
+            }
+            rand_num = gba_register(TMR_COUNT0) % 7;
+            rand_countup();
+            switch (game_get_difficulty()) {
+                case EASY:
+                    if (rand_num > 3) {
+                        if (i == BLOCK_ROWS - 1) {
+                            if (twice_num && getrand() % 2) {
+                                block_type[i][j] = TWICE;
+                                twice_num--;
+                                twice_row = 0;
+                            } else {
+                                block_type[i][j] = DEFAULT;
+                            }
+                        }
+                        block_type[i][j] = DEFAULT;
+                    } else if (rand_num > 1) {
+                        if (twice_num && twice_row) {
+                            block_type[i][j] = TWICE;
+                            twice_num--;
+                            twice_row = 0;
+                        } else {
+                            block_type[i][j] = DEFAULT;
+                        }
+                    } else {
+                        if (width_num && width_row) {
+                            block_type[i][j] = WIDTH;
+                            width_num--;
+                            width_row = 0;
+                        } else {
+                            block_type[i][j] = DEFAULT;
+                        }
+                    }
+                    break;
+                case NORMAL:
+                    break;
+                case HARD:
+                    break;
             }
         }
-        break;
-    case NORMAL:
-        break;
-    case HARD:
-        break;
     }
+
+    twice_num = width_num = speed_num = reverse_num = vel_num = 2;
 
     // block draw
     for (i = 0; i < BLOCK_ROWS; i++) {
