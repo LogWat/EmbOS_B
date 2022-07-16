@@ -24,12 +24,10 @@ static struct box boxes[BLOCK_ROWS][BLOCK_COLS];      // ブロックの位置
 static char blocks[BLOCK_ROWS][BLOCK_COLS];           // ブロックの表示フラグ
 int num_blocks;
 
-static int pos_flag = 0;                         // 速度変更フラグ
+static int pos_flag = 0;                         // 位置変更フラグ
 void pos_toggle(void) { pos_flag = !pos_flag; }
 int get_pos_flag(void) { return pos_flag; }
-static int twice_flag = 0;                       // 硬度２倍フラグ
-void twice_toggle(void) { twice_flag = !twice_flag; }
-int get_twice_flag(void) { return twice_flag; }
+static int twice_blocks[BLOCK_ROWS][BLOCK_COLS] = {0}; // 硬度２倍フラグ
 static int width_flag = 0;                       // ラケット幅変更フラグ
 void width_toggle(void) { width_flag = !width_flag; }
 int get_width_flag(void) { return width_flag; }
@@ -42,7 +40,12 @@ int get_reverse_flag(void) { return reverse_flag; }
 
 void all_flag_reset(void) {
     pos_flag = 0;
-    twice_flag = 0;
+    int i, j;
+    for (i = 0; i < BLOCK_ROWS; i++) {
+        for (j = 0; j < BLOCK_COLS; j++) {
+            twice_blocks[i][j] = 0;
+        }
+    }
     width_flag = 0;
     speed_flag = 0;
     reverse_flag = 0;
@@ -65,6 +68,10 @@ static void delete(int x, int y) {
         return;
     }
     if (blocks[j][i] == '0') {
+        return;
+    }
+    if (twice_blocks[j][i] == 1) {
+        twice_blocks[j][i] = 0;
         return;
     }
     blocks[j][i] = '0';
@@ -106,6 +113,7 @@ static void block_init() {
                     } else if (rand_num > 1 + 1 * (i > 1 && (twice_num == 2 || width_num == 2))) {
                         if (twice_num && twice_row) {
                             block_type[i][j] = TWICE;
+                            twice_blocks[i][j] = 1;
                             twice_num--;
                             twice_row = 0;
                         } else {
@@ -128,6 +136,7 @@ static void block_init() {
                     } else if (rand_num > 2 + 1 * (i > 1 && (twice_num == 2 || width_num == 2 || speed_num == 2))) {
                         if (twice_num && twice_row) {
                             block_type[i][j] = TWICE;
+                            twice_blocks[i][j] = 1;
                             twice_num--;
                             twice_row = 0;
                         } else {
@@ -158,6 +167,7 @@ static void block_init() {
                     } else if (rand_num > 3 + i * (twice_num == 2 || width_num == 2 || speed_num == 2 || reverse_num == 2)) {
                         if (twice_num && twice_row) {
                             block_type[i][j] = TWICE;
+                            twice_blocks[i][j] = 1;
                             twice_num--;
                             twice_row = 0;
                         } else {
