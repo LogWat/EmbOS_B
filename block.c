@@ -11,6 +11,7 @@
 #define COLOR_GREEN     BGR(0, 31, 0)
 #define COLOR_BLUE      BGR(0, 0, 31)
 #define COLOR_YELLOW    BGR(31, 31, 0)
+#define COLOR_DARK_YELLOW    BGR(20, 20, 0)
 #define COLOR_CYAN      BGR(0, 31, 31)
 #define COLOR_PURPLE    BGR(31, 0, 24)
 #define BLOCK_COLS      10
@@ -28,6 +29,7 @@ static int pos_flag = 0;                         // 位置変更フラグ
 void pos_toggle(void) { pos_flag = !pos_flag; }
 int get_pos_flag(void) { return pos_flag; }
 static int twice_blocks[BLOCK_ROWS][BLOCK_COLS] = {0}; // 硬度２倍フラグ
+static int twice_blocks_protect[BLOCK_ROWS][BLOCK_COLS] = {0}; // 一度のループで2度当たり判定にならないように
 static int width_flag = 0;                       // ラケット幅変更フラグ
 void width_toggle(void) { width_flag = !width_flag; }
 int get_width_flag(void) { return width_flag; }
@@ -72,6 +74,11 @@ static void delete(int x, int y) {
     }
     if (twice_blocks[j][i] == 1) {
         twice_blocks[j][i] = 0;
+        twice_blocks_protect[j][i] = 1;
+        draw_box(&boxes[j][i], boxes[j][i].x, boxes[j][i].y, COLOR_DARK_YELLOW); // redraw
+        return;
+    }
+    if (twice_blocks_protect[j][i] == 1) {
         return;
     }
     blocks[j][i] = '0';
@@ -239,6 +246,12 @@ void block_step(void)
     int updown, leftright;
     struct box *ball;
     int ball_dx, ball_dy;
+    int i, j;
+    for (i = 0; i < BLOCK_ROWS; i++) {
+        for (j = 0; j < BLOCK_COLS; j++) {
+            twice_blocks_protect[i][j] = 0;
+        }
+    }
     switch (game_get_state()) {
     case START:
         block_init();
