@@ -11,7 +11,7 @@
 #define COLOR_GREEN     BGR(0, 31, 0)
 #define COLOR_BLUE      BGR(0, 0, 31)
 #define COLOR_YELLOW    BGR(31, 31, 0)
-#define COLOR_DARK_YELLOW    BGR(20, 20, 0)
+#define COLOR_DARK_YELLOW    BGR(25, 25, 0)
 #define COLOR_CYAN      BGR(0, 31, 31)
 #define COLOR_PURPLE    BGR(31, 0, 24)
 #define BLOCK_COLS      10
@@ -24,15 +24,16 @@ static enum btype block_type[BLOCK_COLS][BLOCK_ROWS]; // ブロックタイプ
 static struct box boxes[BLOCK_ROWS][BLOCK_COLS];      // ブロックの位置
 static char blocks[BLOCK_ROWS][BLOCK_COLS];           // ブロックの表示フラグ
 int num_blocks;
+int df = 0;
 
 static int pos_flag = 0;                         // 位置変更フラグ
 void pos_toggle(void) { pos_flag = !pos_flag; }
 int get_pos_flag(void) { return pos_flag; }
-static int twice_blocks[BLOCK_ROWS][BLOCK_COLS] = {0}; // 硬度２倍フラグ
-static int twice_blocks_protect[BLOCK_ROWS][BLOCK_COLS] = {0}; // 一度のループで2度当たり判定にならないように
-static int width_flag = 0;                       // ラケット幅変更フラグ
-void width_toggle(void) { width_flag = !width_flag; }
-int get_width_flag(void) { return width_flag; }
+static int twice_blocks[BLOCK_ROWS][BLOCK_COLS]; // 硬度２倍フラグ
+static int twice_blocks_protect[BLOCK_ROWS][BLOCK_COLS]; // 一度のループで2度当たり判定にならないように
+static int width_by_block;                       // ラケット幅(ブロックによる変更)
+void width_toggle(int width) { width_by_block = width; }
+int get_width_flag(void) { return width_by_block; }
 static int speed_flag = 0;                       // 速度変更フラグ
 void speed_toggle(void) { speed_flag = !speed_flag; }
 int get_speed_flag(void) { return speed_flag; }
@@ -48,7 +49,7 @@ void all_flag_reset(void) {
             twice_blocks[i][j] = 0;
         }
     }
-    width_flag = 0;
+    width_by_block = 1;
     speed_flag = 0;
     reverse_flag = 0;
 }
@@ -120,7 +121,6 @@ static void block_init() {
                     } else if (rand_num > 1 + 1 * (i > 1 && (twice_num == 2 || width_num == 2))) {
                         if (twice_num && twice_row) {
                             block_type[i][j] = TWICE;
-                            twice_blocks[i][j] = 1;
                             twice_num--;
                             twice_row = 0;
                         } else {
@@ -143,7 +143,6 @@ static void block_init() {
                     } else if (rand_num > 2 + 1 * (i > 1 && (twice_num == 2 || width_num == 2 || speed_num == 2))) {
                         if (twice_num && twice_row) {
                             block_type[i][j] = TWICE;
-                            twice_blocks[i][j] = 1;
                             twice_num--;
                             twice_row = 0;
                         } else {
@@ -174,7 +173,6 @@ static void block_init() {
                     } else if (rand_num > 3 + i * (twice_num == 2 || width_num == 2 || speed_num == 2 || reverse_num == 2)) {
                         if (twice_num && twice_row) {
                             block_type[i][j] = TWICE;
-                            twice_blocks[i][j] = 1;
                             twice_num--;
                             twice_row = 0;
                         } else {
@@ -206,7 +204,15 @@ static void block_init() {
                         }
                     }
                     break;
+                default:
+                    break;
             }
+        }
+    }
+
+    for (i = 0; i < BLOCK_ROWS; i++) {
+        for (j = 0; j < BLOCK_COLS; j++) {
+            if (block_type[i][j] == TWICE) twice_blocks[i][j] = 1;
         }
     }
 
@@ -235,6 +241,8 @@ static void block_init() {
                 case POS:
                     draw_box(&boxes[i][j], boxes[i][j].x, boxes[i][j].y, COLOR_RED);
                     break;
+                default:
+                    break;
                 }
             }
         }
@@ -247,16 +255,22 @@ void block_step(void)
     struct box *ball;
     int ball_dx, ball_dy;
     int i, j;
-    for (i = 0; i < BLOCK_ROWS; i++) {
-        for (j = 0; j < BLOCK_COLS; j++) {
-            twice_blocks_protect[i][j] = 0;
-        }
-    }
     switch (game_get_state()) {
     case START:
-        block_init();
+        if (df == 0) {
+            block_init();
+            df = 1;
+        }
         break;
     case RUNNING:
+        if (df) {
+            df = 0;
+        }
+        for (i = 0; i < BLOCK_ROWS; i++) {
+            for (j = 0; j < BLOCK_COLS; j++) {
+                twice_blocks_protect[i][j] = 0;
+            }
+        }
         updown = leftright = 0;
         ball = ball_get_box();
         if (hit(ball->x, ball->y)) {
@@ -300,7 +314,10 @@ void block_step(void)
     case DEAD:
         break;
     case RESTART:
-        block_init();
+        if (df == 0) {
+            block_init();
+            df = 1;
+        }
         break;
     case CLEAR:
         break;
