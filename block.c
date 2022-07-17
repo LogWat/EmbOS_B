@@ -20,6 +20,15 @@
 #define BLOCK_HEIGHT    10
 #define BLOCK_TOP      20
 
+typedef struct {
+    int x;
+    int y;
+    int color;
+    int flag;
+} RedrawBlock;
+
+RedrawBlock redraw = {0, 0, COLOR_BLACK, 0};
+
 static enum btype block_type[BLOCK_COLS][BLOCK_ROWS]; // ブロックタイプ
 static struct box boxes[BLOCK_ROWS][BLOCK_COLS];      // ブロックの位置
 static char blocks[BLOCK_ROWS][BLOCK_COLS];           // ブロックの表示フラグ
@@ -40,6 +49,15 @@ int get_speed_flag(void) { return speed_flag; }
 static int reverse_flag = 0;                     // 操作反転フラグ
 void reverse_toggle(void) { reverse_flag = !reverse_flag; }
 int get_reverse_flag(void) { return reverse_flag; }
+
+// あたっても一度で消さない場合ブロックがボールによって欠けてしまうのを防ぐための関数
+static void redraw_box() {
+    int x = redraw.x;
+    int y = redraw.y;
+    int color = redraw.color;
+    draw_box(&boxes[y][x], boxes[y][x].x, boxes[y][x].y, color);
+    redraw.flag = 0;
+}
 
 void all_flag_reset(void) {
     pos_flag = 0;
@@ -76,7 +94,10 @@ static void delete(int x, int y) {
     if (twice_blocks[j][i] == 1) {
         twice_blocks[j][i] = 0;
         twice_blocks_protect[j][i] = 1;
-        draw_box(&boxes[j][i], boxes[j][i].x, boxes[j][i].y, COLOR_DARK_YELLOW); // redraw
+        redraw.x = i;
+        redraw.y = j;
+        redraw.color = COLOR_DARK_YELLOW;
+        redraw.flag = 1;
         return;
     }
     if (twice_blocks_protect[j][i] == 1) {
@@ -265,6 +286,9 @@ void block_step(void)
     case RUNNING:
         if (df) {
             df = 0;
+        }
+        if (redraw.flag) {
+            redraw_box();
         }
         for (i = 0; i < BLOCK_ROWS; i++) {
             for (j = 0; j < BLOCK_COLS; j++) {
