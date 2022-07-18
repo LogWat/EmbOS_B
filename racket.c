@@ -3,6 +3,7 @@
 #include "racket.h"
 #include "box.h"
 #include "game.h"
+#include "block.h"
 
 #define COLOR_WHITE     BGR(31, 31, 31)
 #define COLOR_BLACK     BGR(0, 0, 0)
@@ -30,11 +31,14 @@ void racket_step(void) {
     int key = gba_register(KEY_STATUS);
 
     int x = r.x, y = r.y;
+    int next_racket_sizex;
 
     switch (game_get_state()) {
     case START:
         x = LCD_WIDTH - 100; y = LCD_HEIGHT - 30;
         dx = 5; dy = 0;
+        r.x = x; r.y = y;
+        r.width = 30; r.height = 5;
         break;
     case RUNNING:
         x = r.x;
@@ -49,6 +53,9 @@ void racket_step(void) {
             bounce_angle();
             ball_set_dy(ball_get_dy() < 0 ? ball_get_dy() : -ball_get_dy());
         }
+        if ((next_racket_sizex = get_width_by_blocks()) != r.width) {
+            r.width = next_racket_sizex;
+        }
         move_box(&r, x, y, COLOR_WHITE);
         break;
     case DEAD:
@@ -56,10 +63,11 @@ void racket_step(void) {
     case RESTART:
         move_box(&r, x, y, COLOR_BLACK);
         x = LCD_WIDTH - 100; y = LCD_HEIGHT - 30;
+        r.x = x; r.y = y;
+        r.width = 30; r.height = 5;
         dx = 5; dy = 0;
         break;
     case CLEAR:
-        draw_box(&r, x, y, COLOR_BLACK);
         break;
     case HOME:
         break;

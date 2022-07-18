@@ -41,8 +41,8 @@ int get_pos_flag(void) { return pos_flag; }
 static int twice_blocks[BLOCK_ROWS][BLOCK_COLS]; // 硬度２倍フラグ
 static int twice_blocks_protect[BLOCK_ROWS][BLOCK_COLS]; // 一度のループで2度当たり判定にならないように
 static int width_by_block;                       // ラケット幅(ブロックによる変更)
-void width_toggle(int width) { width_by_block = width; }
-int get_width_flag(void) { return width_by_block; }
+void width_change(int width) { width_by_block = width; }
+int get_width_by_blocks(void) { return width_by_block; }
 static int speed_flag = 0;                       // 速度変更フラグ
 void speed_toggle(void) { speed_flag = !speed_flag; }
 int get_speed_flag(void) { return speed_flag; }
@@ -67,11 +67,11 @@ void all_flag_reset(void) {
             twice_blocks[i][j] = 0;
         }
     }
-    width_by_block = 1;
+    width_change(30);
     speed_flag = 0;
     reverse_flag = 0;
 }
-int twice_num = 2, width_num = 2, speed_num = 2, reverse_num = 2, pos_num = 2;
+int twice_num = 3, width_num = 2, speed_num = 2, reverse_num = 2, pos_num = 2;
 
 static int hit(int x, int y) {
     int i = x / BLOCK_WIDTH;
@@ -94,6 +94,7 @@ static void delete(int x, int y) {
     if (twice_blocks[j][i] == 1) {
         twice_blocks[j][i] = 0;
         twice_blocks_protect[j][i] = 1;
+        // ブロック表示の修復を次ループで依頼
         redraw.x = i;
         redraw.y = j;
         redraw.color = COLOR_DARK_YELLOW;
@@ -102,6 +103,10 @@ static void delete(int x, int y) {
     }
     if (twice_blocks_protect[j][i] == 1) {
         return;
+    }
+    if (block_type[i][j] == WIDTH) {
+        int next_racket_width = 30 + (getrand() % 2 ? 2 : -2) * (getrand() % 10 + 1);
+        width_change(next_racket_width);
     }
     blocks[j][i] = '0';
     num_blocks--;
@@ -137,7 +142,7 @@ static void block_init() {
             switch (game_get_difficulty()) {
                 // EASY: 特殊ブロック 硬度2倍, ラケット幅変更
                 case EASY:
-                    if (rand_num > 3 + 2 * (i > 1 && (twice_num == 2 || width_num == 2))) {
+                    if (rand_num > 4 + 2 * (i > 1 && (twice_num == 2 || width_num == 2))) {
                         block_type[i][j] = DEFAULT;
                     } else if (rand_num > 1 + 1 * (i > 1 && (twice_num == 2 || width_num == 2))) {
                         if (twice_num && twice_row) {
@@ -237,7 +242,8 @@ static void block_init() {
         }
     }
 
-    twice_num = width_num = speed_num = reverse_num = pos_num = 2;
+    twice_num = 3;
+    width_num = speed_num = reverse_num = pos_num = 2;
 
     // block draw
     for (i = 0; i < BLOCK_ROWS; i++) {

@@ -62,7 +62,6 @@ void ball_step(void)
         move_box(&b, x, y, COLOR_WHITE);
         break;
     case CLEAR:
-        draw_box(&b, x, y, COLOR_BLACK);
         break;
     case HOME:
         break;
