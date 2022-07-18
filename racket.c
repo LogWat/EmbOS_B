@@ -32,6 +32,7 @@ void racket_step(void) {
 
     int x = r.x, y = r.y;
     int next_racket_sizex;
+    int rev_flag = 0;
 
     switch (game_get_state()) {
     case START:
@@ -44,9 +45,10 @@ void racket_step(void) {
         x = r.x;
         y = r.y;
         dx = 5 + get_speed_by_blocks();
-        if (r.x > dx && !(key & KEY_LEFT)) {
+        rev_flag = get_reverse_flag(); // 操作反転状態かどうか
+        if (r.x > dx && (!rev_flag ? !(key & KEY_LEFT) : !(key & KEY_RIGHT))) {
             x -= dx;
-        } else if (r.x < LCD_WIDTH - r.width - dx && !(key & KEY_RIGHT)) {
+        } else if (r.x < LCD_WIDTH - r.width - dx && (!rev_flag ? !(key & KEY_RIGHT) : !(key & KEY_LEFT))) {
             x += dx;
         }
         struct box *b = ball_get_box();
