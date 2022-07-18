@@ -43,6 +43,7 @@ void racket_step(void) {
     case RUNNING:
         x = r.x;
         y = r.y;
+        dx = 5 + get_speed_by_blocks();
         if (r.x > dx && !(key & KEY_LEFT)) {
             x -= dx;
         } else if (r.x < LCD_WIDTH - r.width - dx && !(key & KEY_RIGHT)) {
@@ -50,10 +51,11 @@ void racket_step(void) {
         }
         struct box *b = ball_get_box();
         if (cross(&r, b)) {
-            bounce_angle();
+            // bounce_angle();
             ball_set_dy(ball_get_dy() < 0 ? ball_get_dy() : -ball_get_dy());
         }
         if ((next_racket_sizex = get_width_by_blocks()) != r.width) {
+            move_box(&r, r.x, r.y, COLOR_BLACK); // 前の大きさのラケットを消す
             r.width = next_racket_sizex;
         }
         move_box(&r, x, y, COLOR_WHITE);

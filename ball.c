@@ -3,6 +3,7 @@
 #include "game.h"
 #include "ball.h"
 #include "draw.h"
+#include "block.h"
 
 #define COLOR_WHITE     BGR(31, 31, 31)
 #define COLOR_BLACK     BGR(0, 0, 0)

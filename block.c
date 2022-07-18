@@ -4,12 +4,14 @@
 #include "box.h"
 #include "block.h"
 #include "draw.h"
+#include "ball.h"
 
 #define COLOR_WHITE     BGR(31, 31, 31)
 #define COLOR_BLACK     BGR(0, 0, 0)
 #define COLOR_RED       BGR(31, 0, 0)
 #define COLOR_GREEN     BGR(0, 31, 0)
 #define COLOR_BLUE      BGR(0, 0, 31)
+#define COLOR_LIGHT_YELLOW BGR(31, 31, 10)
 #define COLOR_YELLOW    BGR(31, 31, 0)
 #define COLOR_DARK_YELLOW    BGR(25, 25, 0)
 #define COLOR_CYAN      BGR(0, 31, 31)
@@ -43,9 +45,9 @@ static int twice_blocks_protect[BLOCK_ROWS][BLOCK_COLS]; // 一度のループ�
 static int width_by_block;                       // ラケット幅(ブロックによる変更)
 void width_change(int width) { width_by_block = width; }
 int get_width_by_blocks(void) { return width_by_block; }
-static int speed_flag = 0;                       // 速度変更フラグ
-void speed_toggle(void) { speed_flag = !speed_flag; }
-int get_speed_flag(void) { return speed_flag; }
+static int speed_by_block;                       // ゲームスピード(ボール&ラケット) 加算値
+void speed_change(int speed) { speed_by_block = speed; }
+int get_speed_by_blocks(void) { return speed_by_block; }
 static int reverse_flag = 0;                     // 操作反転フラグ
 void reverse_toggle(void) { reverse_flag = !reverse_flag; }
 int get_reverse_flag(void) { return reverse_flag; }
@@ -68,7 +70,7 @@ void all_flag_reset(void) {
         }
     }
     width_change(30);
-    speed_flag = 0;
+    speed_change(0);
     reverse_flag = 0;
 }
 int twice_num = 3, width_num = 2, speed_num = 2, reverse_num = 2, pos_num = 2;
@@ -104,9 +106,15 @@ static void delete(int x, int y) {
     if (twice_blocks_protect[j][i] == 1) {
         return;
     }
-    if (block_type[i][j] == WIDTH) {
+    if (block_type[j][i] == WIDTH) {
         int next_racket_width = 30 + (getrand() % 2 ? 2 : -2) * (getrand() % 10 + 1);
         width_change(next_racket_width);
+    } else if (block_type[j][i] == SPEED) {
+        int next_speed = 1 + (getrand() % 3);
+        speed_change(next_speed);
+        fix ball_dx = ball_get_dx(), ball_dy = ball_get_dy();
+        ball_set_dx(ball_dx + (next_speed << 1) * (ball_dx > 0 ? 1 : -1));
+        ball_set_dy(ball_dy + (next_speed << 1) * (ball_dy > 0 ? 1 : -1));
     }
     blocks[j][i] = '0';
     num_blocks--;
@@ -236,12 +244,6 @@ static void block_init() {
         }
     }
 
-    for (i = 0; i < BLOCK_ROWS; i++) {
-        for (j = 0; j < BLOCK_COLS; j++) {
-            if (block_type[i][j] == TWICE) twice_blocks[i][j] = 1;
-        }
-    }
-
     twice_num = 3;
     width_num = speed_num = reverse_num = pos_num = 2;
 
@@ -255,6 +257,7 @@ static void block_init() {
                     break;
                 case TWICE:
                     draw_box(&boxes[i][j], boxes[i][j].x, boxes[i][j].y, COLOR_YELLOW);
+                    twice_blocks[i][j] = 1;
                     break;
                 case WIDTH:
                     draw_box(&boxes[i][j], boxes[i][j].x, boxes[i][j].y, COLOR_CYAN);
