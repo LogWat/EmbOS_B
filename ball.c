@@ -21,6 +21,13 @@ int round_fix(fix f) {
     return (f + 0x80) >> 8;
 }
 
+static void ball_init(int *x, int *y) {
+    move_box(&b, *x, *y, COLOR_BLACK);
+    *x = 0; *y = 65;
+    dx = (2 << 8); dy = (2 << 8);
+    move_box(&b, *x, *y, COLOR_WHITE);
+}
+
 void ball_step(void)
 {
     int x = b.x, y = b.y;
@@ -28,10 +35,7 @@ void ball_step(void)
 
     switch (game_get_state()) {
     case START:
-        move_box(&b, x, y, COLOR_BLACK);
-        x = 0; y = 65;
-        dx = (2 << 8); dy = (2 << 8);
-        move_box(&b, x, y, COLOR_WHITE);
+        ball_init(&x, &y);
         break;
     case RUNNING:
         dx_int = round_fix(dx), dy_int = round_fix(dy);
@@ -57,10 +61,7 @@ void ball_step(void)
     case DEAD:
         break;
     case RESTART:
-        move_box(&b, x, y, COLOR_BLACK);
-        x = 0; y = 65;
-        dx = (2 << 8); dy = (2 << 8);
-        move_box(&b, x, y, COLOR_WHITE);
+        ball_init(&x, &y);
         break;
     case CLEAR:
         break;

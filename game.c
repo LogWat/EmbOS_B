@@ -72,7 +72,7 @@ void rand_countup(void) {
 
 // 疑似乱数を取得する (0～32767)
 int getrand(void) {
-    rand_seed = (rand_seed * 123) + 456;
+    rand_seed = (rand_seed * 117 + 13);
     return rand_seed % 32768;
 }
 

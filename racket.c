@@ -27,6 +27,13 @@ static void bounce_angle() {
     ball_set_dy(new_ball_dy);
 }
 
+static void racket_init(int *x, int *y) {
+    *x = LCD_WIDTH - 100; *y = LCD_HEIGHT - 30;
+    dx = 5; dy = 0;
+    r.x = *x; r.y = *y;
+    r.width = 30; r.height = 5;
+}
+
 void racket_step(void) {
     int key = gba_register(KEY_STATUS);
 
@@ -36,15 +43,12 @@ void racket_step(void) {
 
     switch (game_get_state()) {
     case START:
-        x = LCD_WIDTH - 100; y = LCD_HEIGHT - 30;
-        dx = 5; dy = 0;
-        r.x = x; r.y = y;
-        r.width = 30; r.height = 5;
+        racket_init(&x, &y);
         break;
     case RUNNING:
         x = r.x;
         y = r.y;
-        dx = 5 + get_speed_by_blocks();
+        dx = 5 + get_speed_by_blocks() / 2;
         rev_flag = get_reverse_flag(); // 操作反転状態かどうか
         if (r.x > dx && (!rev_flag ? !(key & KEY_LEFT) : !(key & KEY_RIGHT))) {
             x -= dx;
@@ -66,10 +70,7 @@ void racket_step(void) {
         break;
     case RESTART:
         move_box(&r, x, y, COLOR_BLACK);
-        x = LCD_WIDTH - 100; y = LCD_HEIGHT - 30;
-        r.x = x; r.y = y;
-        r.width = 30; r.height = 5;
-        dx = 5; dy = 0;
+        racket_init(&x, &y);
         break;
     case CLEAR:
         break;
