@@ -15,7 +15,7 @@
 #define COLOR_YELLOW    BGR(31, 31, 0)
 #define COLOR_DARK_YELLOW    BGR(25, 25, 0)
 #define COLOR_CYAN      BGR(0, 31, 31)
-#define COLOR_PURPLE    BGR(25, 0, 17)
+#define COLOR_PURPLE    BGR(31, 0, 25)
 #define BLOCK_COLS      10
 #define BLOCK_ROWS      3
 #define BLOCK_WIDTH     (LCD_WIDTH / BLOCK_COLS)
@@ -151,9 +151,9 @@ static void block_init() {
             switch (game_get_difficulty()) {
                 // EASY: 特殊ブロック 硬度2倍, ラケット幅変更
                 case EASY:
-                    if (rand_num > 6 + 2 * (i > 1 && (twice_num == 2 || width_num == 2))) {
+                    if (rand_num > 7 + 2 * (i > 1 && (twice_num == 2 || width_num == 2))) {
                         block_type[i][j] = DEFAULT;
-                    } else if (rand_num > 3 + 1 * (i > 1 && (width_num == 2))) {
+                    } else if (rand_num > 4 + 1 * (i > 1 && (width_num == 2))) {
                         if (twice_num && twice_row) {
                             block_type[i][j] = TWICE;
                             twice_num--;
@@ -173,9 +173,9 @@ static void block_init() {
                     break;
                 // NORMAL: 特殊ブロック 硬度2倍, ラケット幅変更, 速度変更
                 case NORMAL:
-                    if (rand_num > 6 + 2 * (i > 1 && (twice_num == 2 || width_num == 2 || speed_num == 2))) {
+                    if (rand_num > 7 + 2 * (i > 1 && (twice_num == 2 || width_num == 2 || speed_num == 2))) {
                         block_type[i][j] = DEFAULT;
-                    } else if (rand_num > 3 + 1 * (i > 1 && (twice_num == 2 || width_num == 2 || speed_num == 2))) {
+                    } else if (rand_num > 4 + 1 * (i > 1 && (twice_num == 2 || width_num == 2 || speed_num == 2))) {
                         if (twice_num && twice_row) {
                             block_type[i][j] = TWICE;
                             twice_num--;
@@ -184,7 +184,7 @@ static void block_init() {
                             block_type[i][j] = DEFAULT;
                         }
                     } else {
-                        if (rand_num % 2) {
+                        if (rand_num > 1 + 1 * (i > 1 && (width_num == 2))) {
                             if (speed_num && speed_row) {
                                 block_type[i][j] = SPEED;
                                 speed_num--;
@@ -224,7 +224,7 @@ static void block_init() {
                             block_type[i][j] = DEFAULT;
                         }
                     } else {
-                        if (getrand() % 2 == 0) {
+                        if (rand_num > 0 + (i > 1 && reverse_num == 2)) {
                             if (width_num && width_row) {
                                 block_type[i][j] = WIDTH;
                                 width_num--;
