@@ -1,7 +1,7 @@
 enum btype {DEFAULT, TWICE, WIDTH, SPEED, REVERSE, POS};
 extern void block_step(void);
-extern void pos_toggle(void);
-extern int get_pos_flag(void);
+extern void pos_change(int diff);
+extern int get_pos_by_blocks(void);
 extern void width_change(int width);
 extern int get_width_by_blocks(void);
 extern void speed_change(int speed);

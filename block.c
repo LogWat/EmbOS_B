@@ -15,7 +15,7 @@
 #define COLOR_YELLOW    BGR(31, 31, 0)
 #define COLOR_DARK_YELLOW    BGR(25, 25, 0)
 #define COLOR_CYAN      BGR(0, 31, 31)
-#define COLOR_PURPLE    BGR(31, 0, 25)
+#define COLOR_PURPLE    BGR(31, 0, 28)
 #define BLOCK_COLS      10
 #define BLOCK_ROWS      3
 #define BLOCK_WIDTH     (LCD_WIDTH / BLOCK_COLS)
@@ -37,9 +37,9 @@ static char blocks[BLOCK_ROWS][BLOCK_COLS];           // ブロックの表示�
 int num_blocks;
 int df = 0;
 
-static int pos_flag = 0;                         // 位置変更フラグ
-void pos_toggle(void) { pos_flag = !pos_flag; }
-int get_pos_flag(void) { return pos_flag; }
+static int pos_by_blocks;                         // ラケット位置差分
+void pos_change(int diff) { pos_by_blocks += diff; }
+int get_pos_by_blocks(void) { return pos_by_blocks; }
 static int twice_blocks[BLOCK_ROWS][BLOCK_COLS]; // 硬度２倍フラグ
 static int twice_blocks_protect[BLOCK_ROWS][BLOCK_COLS]; // 一度のループで2度当たり判定にならないように
 static int width_by_block;                       // ラケット幅(ブロックによる変更)
@@ -62,7 +62,7 @@ static void redraw_box() {
 }
 
 void all_flag_reset(void) {
-    pos_flag = 0;
+    pos_by_blocks = 0;
     int i, j;
     for (i = 0; i < BLOCK_ROWS; i++) {
         for (j = 0; j < BLOCK_COLS; j++) {
@@ -73,7 +73,7 @@ void all_flag_reset(void) {
     speed_change(0);
     reverse_flag = 0;
 }
-int twice_num = 3, width_num = 2, speed_num = 2, reverse_num = 2, pos_num = 2;
+int twice_num = 5, width_num = 3, speed_num = 3, reverse_num = 3, pos_num = 3;
 
 static int hit(int x, int y) {
     int i = x / BLOCK_WIDTH;
@@ -147,13 +147,13 @@ static void block_init() {
                 block_type[i][j] = DEFAULT;
                 continue;
             }
-            rand_num = (gba_register(TMR_COUNT0) + 123) % 11;
+            rand_num = getrand();
             switch (game_get_difficulty()) {
                 // EASY: 特殊ブロック 硬度2倍, ラケット幅変更
                 case EASY:
-                    if (rand_num > 7 + 2 * (i > 1 && (twice_num == 2 || width_num == 2))) {
+                    if (rand_num > 7 + 2 * (i && (twice_num || width_num))) {
                         block_type[i][j] = DEFAULT;
-                    } else if (rand_num > 4 + 1 * (i > 1 && (width_num == 2))) {
+                    } else if (rand_num > 3 + 2 * (i && width_num)) {
                         if (twice_num && twice_row) {
                             block_type[i][j] = TWICE;
                             twice_num--;
@@ -173,9 +173,9 @@ static void block_init() {
                     break;
                 // NORMAL: 特殊ブロック 硬度2倍, ラケット幅変更, 速度変更
                 case NORMAL:
-                    if (rand_num > 7 + 2 * (i > 1 && (twice_num == 2 || width_num == 2 || speed_num == 2))) {
+                    if (rand_num > 7 + 2 * (i && (twice_num || width_num || speed_num))) {
                         block_type[i][j] = DEFAULT;
-                    } else if (rand_num > 4 + 1 * (i > 1 && (twice_num == 2 || width_num == 2 || speed_num == 2))) {
+                    } else if (rand_num > 4 + 1 * (i && (twice_num || width_num || speed_num))) {
                         if (twice_num && twice_row) {
                             block_type[i][j] = TWICE;
                             twice_num--;
@@ -184,7 +184,7 @@ static void block_init() {
                             block_type[i][j] = DEFAULT;
                         }
                     } else {
-                        if (rand_num > 1 + 1 * (i > 1 && (width_num == 2))) {
+                        if (rand_num > 1 + 1 * (i && width_num)) {
                             if (speed_num && speed_row) {
                                 block_type[i][j] = SPEED;
                                 speed_num--;
@@ -205,9 +205,9 @@ static void block_init() {
                     break;
                 // HARD: 特殊ブロック 硬度2倍, ラケット幅変更, 速度変更, 操作反転
                 case HARD:
-                    if (rand_num > 7) {
+                    if (rand_num > 8 + (i && (twice_num || width_num || speed_num || reverse_num))) {
                         block_type[i][j] = DEFAULT;
-                    } else if (rand_num > 4 + i * (twice_num == 2 || width_num == 2 || speed_num == 2 || reverse_num == 2)) {
+                    } else if (rand_num > 4 + (i && (width_num || speed_num || reverse_num))) {
                         if (twice_num && twice_row) {
                             block_type[i][j] = TWICE;
                             twice_num--;
@@ -215,7 +215,7 @@ static void block_init() {
                         } else {
                             block_type[i][j] = DEFAULT;
                         }
-                    } else if (rand_num > 2 + (i - 1) * (i > 1) * (twice_num == 2 || width_num == 2 || speed_num == 2 || reverse_num == 2)) {
+                    } else if (rand_num > 2 + (i && (speed_num || reverse_num))) {
                         if (speed_num && speed_row) {
                             block_type[i][j] = SPEED;
                             speed_num--;
@@ -224,7 +224,7 @@ static void block_init() {
                             block_type[i][j] = DEFAULT;
                         }
                     } else {
-                        if (rand_num > 0 + (i > 1 && reverse_num == 2)) {
+                        if (rand_num > 0 + (i && reverse_num)) {
                             if (width_num && width_row) {
                                 block_type[i][j] = WIDTH;
                                 width_num--;
@@ -249,8 +249,8 @@ static void block_init() {
         }
     }
 
-    twice_num = 3;
-    width_num = speed_num = reverse_num = pos_num = 2;
+    twice_num = 5;
+    width_num = speed_num = reverse_num = pos_num = 3;
 
     // block draw
     for (i = 0; i < BLOCK_ROWS; i++) {

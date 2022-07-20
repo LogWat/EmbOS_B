@@ -30,7 +30,6 @@ int main(void)
     gba_register(TMR_CTRL0) = TMR_ENABLE + TMR_1024CLOCK;
 
     while (1) {
-        rand_countup();
         wait_until_vblank();
         game_step();
         draw_step(); // 画面更新担当だから ball, racket, block よりも先に呼び出し
