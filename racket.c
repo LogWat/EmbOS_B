@@ -16,13 +16,18 @@ static void bounce_angle() {
     fix ball_dx = ball_get_dx(), ball_dy = ball_get_dy(); // fix: 整数部24bit, 小数部8bit
     int dx = round_fix(ball_dx), dy = round_fix(ball_dy);
     int v = (dx * dx + dy * dy);
-    fix new_ball_dx, new_ball_dy = 0;
-    if (b->x + b->width/2 > r.x + r.width/2) {
-        new_ball_dx = ball_dx + (((b->x + b->width / 2) - (r.x + r.width / 2)) << 2);
-    } else {
-        new_ball_dx = ball_dx - (((r.x + r.width / 2) - (b->x + b->width / 2)) << 2);
+    fix new_ball_dx = ball_dx, new_ball_dy = 0;
+    if (b->x + b->width/2 < r.x + r.width/2) {
+        new_ball_dx = ball_dx - ((r.x + r.width/2 - b->x - b->width/2) << 5);
+    } else if (b->x + b->width/2 > r.x + r.width/2) {
+        new_ball_dx = ball_dx + ((b->x + b->width/2 - r.x - r.width/2) << 5);
     }
-    new_ball_dy = ball_dy;
+    int new_dx = round_fix(new_ball_dx), new_dy = 0;
+    while (v > new_dx * new_dx + new_dy * new_dy) {
+        new_ball_dy += (1 << 5);
+        new_dy = round_fix(new_ball_dy);
+    }
+    new_ball_dy *= (ball_dy < 0 ? -1 : 1);
     ball_set_dx(new_ball_dx);
     ball_set_dy(new_ball_dy);
 }
@@ -57,7 +62,7 @@ void racket_step(void) {
         }
         struct box *b = ball_get_box();
         if (cross(&r, b)) {
-            // bounce_angle();
+            bounce_angle();
             ball_set_dy(ball_get_dy() < 0 ? ball_get_dy() : -ball_get_dy());
         }
         if ((next_racket_sizex = get_width_by_blocks()) != r.width) {

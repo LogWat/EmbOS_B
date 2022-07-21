@@ -15,7 +15,7 @@
 #define COLOR_YELLOW    BGR(31, 31, 0)
 #define COLOR_DARK_YELLOW    BGR(25, 25, 0)
 #define COLOR_CYAN      BGR(0, 31, 31)
-#define COLOR_PURPLE    BGR(31, 0, 28)
+#define COLOR_PURPLE    BGR(31, 0, 29)
 #define BLOCK_COLS      10
 #define BLOCK_ROWS      3
 #define BLOCK_WIDTH     (LCD_WIDTH / BLOCK_COLS)
@@ -110,7 +110,7 @@ static void delete(int x, int y) {
         int next_racket_width = 30 + (getrand() % 2 ? 2 : -2) * (getrand() % 10 + 1);
         width_change(next_racket_width);
     } else if (block_type[j][i] == SPEED) {
-        int next_speed = 1 + (getrand() % 3);
+        int next_speed = 1 + (getrand() % 3) / 3;
         speed_change(next_speed);
         fix ball_dx = ball_get_dx(), ball_dy = ball_get_dy();
         ball_set_dx(ball_dx + (next_speed << 6) * (ball_dx > 0 ? 1 : -1));

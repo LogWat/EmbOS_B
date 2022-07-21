@@ -140,7 +140,12 @@ void game_step(void)
                     game_set_difficulty(HARD);
                     break;
                 case HARD:
+                    game_set_difficulty(INSANE);
+                    break;
+                case INSANE:
                     game_set_difficulty(EASY);
+                    break;
+                default:
                     break;
                 }
                 break;

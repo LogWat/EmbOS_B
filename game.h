@@ -1,5 +1,5 @@
 enum state {START, RUNNING, DEAD, RESTART, CLEAR, HOME, STOP, SETTING, SCORE};
-enum song_difficulty {EASY, NORMAL, HARD};
+enum song_difficulty {EASY, NORMAL, HARD, INSANE};
 extern void game_step(void);             // 1ティックの動作を行なう．
 extern enum state game_get_state(void);  // 今の状態を問い合わせる．
 extern enum state game_get_prev_state(void); // 前の状態を問い合わせる．

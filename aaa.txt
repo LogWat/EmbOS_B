@@ -1,0 +1,12 @@
+特殊ブロック
+TWICE：２度当てないと壊れない
+WIDTH：ラケットの幅をランダムに変更(大きくなったり小さくなったり)
+SPEED：ボール＆ラケットの速度を変更(早くなる　遅くなりはしない)
+REVERSE：操作反転
+POS：ラケットのY座標を変更
+
+難易度
+EASY：特殊ブロックはTWICE WIDTH
+NORMAL：TWICE, WIDTH, SPEED
+HARD：TWICE, WIDTH, SPEED, REVERSE
+INSANE：TWICE，WIDTH, SPEED, REVERSE, POS 通常ボール速度上昇, ラケット幅減少 (難易度異常に付きプレイは非推奨)

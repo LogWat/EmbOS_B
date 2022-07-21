@@ -94,6 +94,9 @@ static void draw_difficulty(void) {
             case HARD:
                 draw_string(fb, COLOR_BLACK, "HARD", LCD_WIDTH / 2 + FONT_SIZE * 5, LCD_HEIGHT / 4 +  (FONT_SIZE+4) * 2);
                 break;
+            case INSANE:
+                draw_string(fb, COLOR_BLACK, "INSANE", LCD_WIDTH / 2 + FONT_SIZE * 5, LCD_HEIGHT / 4 +  (FONT_SIZE+4) * 2);
+                break;
         }
     }
     // 現在の難易度を描写
@@ -106,6 +109,9 @@ static void draw_difficulty(void) {
             break;
         case HARD:
             draw_string(fb, COLOR_RED, "HARD", LCD_WIDTH / 2 + FONT_SIZE * 5, LCD_HEIGHT / 4 +  (FONT_SIZE+4) * 2);
+            break;
+        case INSANE:
+            draw_string(fb, COLOR_PURPLE, "INSANE", LCD_WIDTH / 2 + FONT_SIZE * 5, LCD_HEIGHT / 4 +  (FONT_SIZE+4) * 2);
             break;
     }
 }
