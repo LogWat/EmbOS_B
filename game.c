@@ -8,8 +8,8 @@
 
 static enum state prev_state = HOME;            // 前回のstate(描写用)
 static enum state current_state = HOME;        // 現在の状態
-static enum song_difficulty prev_game_difficulty = EASY;  // 前回のgame_difficulty(描写用)
-static enum song_difficulty game_difficulty = EASY;       // ゲームの難易度
+static enum difficulty prev_game_difficulty = EASY;  // 前回のgame_difficulty(描写用)
+static enum difficulty game_difficulty = EASY;       // ゲームの難易度
 static int prev_auto_play = 0;                  // 前回のauto_play(描写用)
 static int auto_play = 0;                       // 自動プレイフラグ
 static int optidx = 0;                          // オプション番号 (選択肢のどれを選んでいるか)
@@ -39,12 +39,12 @@ void game_set_state(enum state new_state) {
 void game_set_prev_state(enum state new_state) {
     prev_state = new_state;
 }
-enum song_difficulty game_get_difficulty(void) { return game_difficulty; }
-enum song_difficulty game_get_prev_difficulty(void) { return prev_game_difficulty; }
-void game_set_difficulty(enum song_difficulty new_difficulty) {
+enum difficulty game_get_difficulty(void) { return game_difficulty; }
+enum difficulty game_get_prev_difficulty(void) { return prev_game_difficulty; }
+void game_set_difficulty(enum difficulty new_difficulty) {
     game_difficulty = new_difficulty;
 }
-void game_set_prev_difficulty(enum song_difficulty new_difficulty) {
+void game_set_prev_difficulty(enum difficulty new_difficulty) {
     prev_game_difficulty = new_difficulty;
 }
 
