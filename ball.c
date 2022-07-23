@@ -18,7 +18,8 @@ void ball_set_dx(fix new_dx) { dx = new_dx; }
 struct box *ball_get_box(void) { return &b; }
 
 int round_fix(fix f) {
-    return (f + 0x80) >> 8;
+    if (f < 0) return f >> 8;
+    else return (f + 0x80) >> 8;
 }
 
 static void ball_init(int *x, int *y) {
@@ -27,6 +28,8 @@ static void ball_init(int *x, int *y) {
     dx = (2 << 8); dy = (2 << 8);
     move_box(&b, *x, *y, COLOR_WHITE);
 }
+
+static int prev_v;
 
 void ball_step(void)
 {
@@ -39,6 +42,11 @@ void ball_step(void)
         break;
     case RUNNING:
         dx_int = round_fix(dx), dy_int = round_fix(dy);
+        if (dy_int * (dy_int < 0 ? -1 : 1) != prev_v) {
+            draw_number((hword *)VRAM, COLOR_BLACK, prev_v, 0, 0);
+            prev_v = dy_int * (dy_int < 0 ? -1 : 1);
+            draw_number((hword *)VRAM, COLOR_WHITE, prev_v, 0, 0);
+        }
         x = b.x + dx_int; y = b.y + dy_int;
         if (x < 0) {
             x = 0;

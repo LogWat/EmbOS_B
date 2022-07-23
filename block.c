@@ -73,7 +73,7 @@ void all_flag_reset(void) {
     speed_change(0);
     reverse_flag = 0;
 }
-int twice_num = 5, width_num = 3, speed_num = 3, reverse_num = 3, pos_num = 3;
+int twice_num = 5, width_num = 3, speed_num = 2, reverse_num = 3, pos_num = 3;
 
 static int hit(int x, int y) {
     int i = x / BLOCK_WIDTH;
@@ -87,6 +87,7 @@ static int hit(int x, int y) {
 static void delete(int x, int y) {
     int i = x / BLOCK_WIDTH;
     int j = (y - BLOCK_TOP) / BLOCK_HEIGHT;
+    enum difficulty df = game_get_difficulty();
     if (i < 0 || i >= BLOCK_COLS || j < 0 || j >= BLOCK_ROWS) {
         return;
     }
@@ -106,11 +107,12 @@ static void delete(int x, int y) {
     if (twice_blocks_protect[j][i] == 1) {
         return;
     }
+
     if (block_type[j][i] == WIDTH) {
         int next_racket_width = 30 + (getrand() % 2 ? 2 : -2) * (getrand() % 10 + 1);
         width_change(next_racket_width);
     } else if (block_type[j][i] == SPEED) {
-        int next_speed = 1 + (getrand() % 3) / 3;
+        int next_speed = 2;
         speed_change(next_speed);
         fix ball_dx = ball_get_dx(), ball_dy = ball_get_dy();
         ball_set_dx(ball_dx + (next_speed << 6) * (ball_dx > 0 ? 1 : -1));
@@ -143,7 +145,7 @@ static void block_init() {
     for (i = 0; i < BLOCK_ROWS; i++) {
         twice_row = width_row = speed_row = reverse_row = pos_row = 1;
         for (j = 0; j < BLOCK_COLS; j++) {
-            if (j < 2) {
+            if (j < 1) {
                 block_type[i][j] = DEFAULT;
                 continue;
             }
@@ -250,7 +252,8 @@ static void block_init() {
     }
 
     twice_num = 5;
-    width_num = speed_num = reverse_num = pos_num = 3;
+    speed_num = 2;
+    width_num = reverse_num = pos_num = 3;
 
     // block draw
     for (i = 0; i < BLOCK_ROWS; i++) {
