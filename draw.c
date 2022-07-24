@@ -64,18 +64,18 @@ void draw_number(hword *ptr, hword color, int num, int x, int y)
     draw_string(ptr, color, str, x, y);
 }
 
-static void opt_slct(int num_of_options) {
+static void opt_slct(int num_of_options, int base_y, int interval) {
     if (num_of_options == 0) {
         return;
     }
     hword *fb = (hword *)VRAM;
     int i;
-    int h = LCD_HEIGHT / 4;
+    int h = base_y;
     for (i = 0; i < num_of_options; i++) {
         if (i == get_optidx()) {
-            draw_string(fb, COLOR_WHITE, "->", 20, h + (FONT_SIZE + 4) * i);
+            draw_string(fb, COLOR_WHITE, "->", 20, h + interval * (i+1));
         } else if (i == get_prev_optidx()) {
-            draw_string(fb, COLOR_BLACK, "->", 20, h + (FONT_SIZE + 4) * i);
+            draw_string(fb, COLOR_BLACK, "->", 20, h + interval * (i+1));
         }
     }
 }
@@ -94,6 +94,9 @@ static void draw_difficulty(void) {
             case HARD:
                 draw_string(fb, COLOR_BLACK, "HARD", LCD_WIDTH / 2 + FONT_SIZE * 5, LCD_HEIGHT / 4 +  (FONT_SIZE+4) * 2);
                 break;
+            case INSANE:
+                draw_string(fb, COLOR_BLACK, "INSANE", LCD_WIDTH / 2 + FONT_SIZE * 5, LCD_HEIGHT / 4 +  (FONT_SIZE+4) * 2);
+                break;
         }
     }
     // 現在の難易度を描写
@@ -106,6 +109,9 @@ static void draw_difficulty(void) {
             break;
         case HARD:
             draw_string(fb, COLOR_RED, "HARD", LCD_WIDTH / 2 + FONT_SIZE * 5, LCD_HEIGHT / 4 +  (FONT_SIZE+4) * 2);
+            break;
+        case INSANE:
+            draw_string(fb, COLOR_PURPLE, "INSANE", LCD_WIDTH / 2 + FONT_SIZE * 5, LCD_HEIGHT / 4 +  (FONT_SIZE+4) * 2);
             break;
     }
 }
@@ -149,37 +155,40 @@ void draw_step() {
     case START:
         if (screen_changed) {
             reset_screen();
-            draw_string(fb, COLOR_WHITE, "Press START to start", LCD_WIDTH / 2 - FONT_SIZE * 10, LCD_HEIGHT / 2);
-            screen_changed_flag_reset();
         }
         break;
     case RUNNING:
         break;
     case DEAD:
         if (screen_changed) {
-            draw_string(fb, COLOR_WHITE, "Game Over", LCD_WIDTH / 2 - FONT_SIZE * 5, LCD_HEIGHT / 2);
-            draw_string(fb, COLOR_WHITE, "Press START to restart", LCD_WIDTH / 2 - FONT_SIZE * 11, LCD_HEIGHT / 2 + FONT_SIZE);
+            draw_string(fb, COLOR_RED, "Game Over", LCD_WIDTH / 2 - FONT_SIZE * 5, LCD_HEIGHT / 2);
+            draw_string(fb, COLOR_WHITE, "Back To HOME", LCD_WIDTH / 2 - FONT_SIZE * 6, LCD_HEIGHT / 2 + (FONT_SIZE + 4));
+            draw_string(fb, COLOR_WHITE, "Continue", LCD_WIDTH / 2 - FONT_SIZE * 4, LCD_HEIGHT / 2 + (FONT_SIZE + 4) * 2);
+            opt_slct(2, LCD_HEIGHT / 2, (FONT_SIZE + 4));
+        }
+        if (get_optidx() != get_prev_optidx()) {
+            opt_slct(2, LCD_HEIGHT / 2, (FONT_SIZE + 4));
+            set_prev_optidx(get_optidx());
         }
         break;
     case CLEAR:
         if (screen_changed) {
-            draw_string(fb, COLOR_WHITE, "Game Clear", LCD_WIDTH / 2 - FONT_SIZE * 5, LCD_HEIGHT / 2);
-            draw_string(fb, COLOR_WHITE, "Press START to restart", LCD_WIDTH / 2 - FONT_SIZE * 11, LCD_HEIGHT / 2 + FONT_SIZE);
+            draw_string(fb, COLOR_GREEN, "Game Clear!!", LCD_WIDTH / 2 - FONT_SIZE * 5, LCD_HEIGHT / 2);
+            draw_string(fb, COLOR_WHITE, "Press START to back to HOME", LCD_WIDTH / 2 - FONT_SIZE * 14, LCD_HEIGHT / 2 + FONT_SIZE + 4);
         }
         break;
     case RESTART:
         break;
     case HOME:
         if (screen_changed) {
-            draw_string(fb, COLOR_WHITE, "Setting", LCD_WIDTH / 2 - FONT_SIZE * 5, LCD_HEIGHT / 4);
             draw_autoplay_status();
             draw_string(fb, COLOR_WHITE, "Difficulty: ", LCD_WIDTH / 2 - FONT_SIZE * 10, LCD_HEIGHT / 4 + (FONT_SIZE+4) * 2);
             draw_difficulty();
             draw_string(fb, COLOR_WHITE, "Play!", LCD_WIDTH / 2 - FONT_SIZE * 2, LCD_HEIGHT / 4 +  (FONT_SIZE+4) * 3);
-            opt_slct(4);
+            opt_slct(3, LCD_HEIGHT / 4, FONT_SIZE + 4);
         }
         if (get_optidx() != get_prev_optidx()) {
-            opt_slct(4);
+            opt_slct(3, LCD_HEIGHT / 4, FONT_SIZE + 4);
             set_prev_optidx(get_optidx());
         }
         if (game_get_difficulty() != game_get_prev_difficulty()) {
