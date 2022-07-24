@@ -42,11 +42,6 @@ void ball_step(void)
         break;
     case RUNNING:
         dx_int = round_fix(dx), dy_int = round_fix(dy);
-        if (dy_int * (dy_int < 0 ? -1 : 1) != prev_v) {
-            draw_number((hword *)VRAM, COLOR_BLACK, prev_v, 0, 0);
-            prev_v = dy_int * (dy_int < 0 ? -1 : 1);
-            draw_number((hword *)VRAM, COLOR_WHITE, prev_v, 0, 0);
-        }
         x = b.x + dx_int; y = b.y + dy_int;
         if (x < 0) {
             x = 0;
