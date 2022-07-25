@@ -53,7 +53,7 @@ static void bounce_angle() {
 
 static void racket_init(int *x, int *y) {
     *x = LCD_WIDTH - 100; *y = LCD_HEIGHT - 30;
-    dx = 5; dy = 0;
+    dx = 5 + 3 * (game_get_difficulty() == INSANE); dy = 0;
     r.x = *x; r.y = *y;
     r.width = 30; r.height = 5;
 }
@@ -62,7 +62,7 @@ void racket_step(void) {
     int key = gba_register(KEY_STATUS);
 
     int x = r.x, y = r.y;
-    int next_racket_sizex;
+    int next_racket_sizex, next_racket_posy;
     int rev_flag = 0;
     int auto_flag = 0;
     struct box *b;
@@ -86,7 +86,7 @@ void racket_step(void) {
         if (auto_flag) {
             b = ball_get_box();
             ball_dx = round_fix(ball_get_dx()), ball_dy = round_fix(ball_get_dy());
-            d_y = (ball_dy > 0) ? 5 : (r.y - b->y) / 4;
+            d_y = (ball_dy > 0) ? 5 - 3 * (game_get_difficulty() == INSANE) : (r.y - b->y) / 3;
             if (b->x + b->width / 2 + ball_dx * d_y > r.x + r.width - dx && r.x < LCD_WIDTH - r.width - dx) {
                 x += dx;
             } else if (b->x + b->width + ball_dx * d_y < r.x + dx && r.x > dx) {
@@ -102,6 +102,11 @@ void racket_step(void) {
         if ((next_racket_sizex = get_width_by_blocks()) != r.width) {
             move_box(&r, r.x, r.y, COLOR_BLACK); // 前の大きさのラケットを消す
             r.width = next_racket_sizex;
+        }
+        if ((next_racket_posy = get_pos_by_blocks()) != r.y) {
+            move_box(&r, r.x, r.y, COLOR_BLACK); // 前の位置のラケットを消す
+            r.y = next_racket_posy;
+            y = r.y;
         }
         move_box(&r, x, y, COLOR_WHITE);
         break;

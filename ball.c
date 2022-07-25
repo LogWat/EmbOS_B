@@ -25,11 +25,10 @@ int round_fix(fix f) {
 static void ball_init(int *x, int *y) {
     move_box(&b, *x, *y, COLOR_BLACK);
     *x = 0; *y = 65;
-    dx = (2 << 8); dy = (2 << 8);
+    enum difficulty diff = game_get_difficulty();
+    dx = ((2 + (diff == INSANE)) << 8), dy = ((2 + (diff == INSANE)) << 8);
     move_box(&b, *x, *y, COLOR_WHITE);
 }
-
-static int prev_v;
 
 void ball_step(void)
 {

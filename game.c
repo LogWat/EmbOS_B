@@ -70,7 +70,7 @@ void rand_countup(void) {
     rand_seed = (++rand_seed > 0xFFFF) ? 0 : rand_seed;
 }
 
-// 疑似乱数を取得する (0～32767)
+// 疑似乱数を取得する (0～10)
 int getrand(void) {
     int r = rand_seed;
     r = (r * 3 + 7);
