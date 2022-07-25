@@ -111,7 +111,8 @@ static void delete(int x, int y) {
         int next_racket_width = 30;
         switch (df) {
             case EASY:
-                // EASYにはWIDTHブロックはない
+                // 31 ~ 40
+                next_racket_width = 30 + (getrand() % 10 + 1);
                 break;
             case NORMAL:
                 // 20 ~ 50

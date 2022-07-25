@@ -1,9 +1,9 @@
 AUTO
-自動プレイモード INSANE用
+自動プレイモード 主にINSANE鑑賞用
 
 特殊ブロック
 TWICE：  ２度当てないと壊れない
-WIDTH：  ラケットの幅をランダムに変更(大きくなったり小さくなったり)
+WIDTH：  ラケットの幅をランダムに変更(大きくなったり小さくなったりする)
 SPEED：  ボール＆ラケットの速度を変更(早くなる　遅くなりはしない)
 REVERSE：操作反転
 POS：    ラケットのY座標を変更
@@ -15,7 +15,7 @@ HARD：  TWICE, WIDTH, SPEED, REVERSE
 INSANE：TWICE，WIDTH, SPEED, REVERSE, POS 平常ボール速度上昇 (非常に難しい クリアは困難)
 
 WIDTHブロックと難易度によるラケット幅の変化(デフォルトは30)
-EASY:   WIDTHブロックは出現しない
+EASY:   31 ~ 40 (小さくなることはない)
 NORMAL: 20 ~ 50
 HARD:   10 ~ 50
 INSANE: 10 ~ 29 (大きくなることはない)
