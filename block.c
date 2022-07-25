@@ -73,7 +73,6 @@ void all_flag_reset(void) {
     pos_change(LCD_HEIGHT - 30);
     reverse_flag = 0;
 }
-int twice_num = 5, width_num = 3, speed_num = 2, reverse_num = 3, pos_num = 3;
 
 static int hit(int x, int y) {
     int i = x / BLOCK_WIDTH;
@@ -144,9 +143,12 @@ static void delete(int x, int y) {
     draw_box(&boxes[j][i], boxes[j][i].x, boxes[j][i].y, COLOR_BLACK);
 }
 
+int twice_num, width_num, speed_num, reverse_num, pos_num;
+
 static void block_init() {
     int i, j;
     int rand_num;
+    enum difficulty df = game_get_difficulty();
     for (i = 0; i < BLOCK_ROWS; i++) {
         for (j = 0; j < BLOCK_COLS; j++) {
             blocks[i][j] = '1';
@@ -161,6 +163,11 @@ static void block_init() {
 
     // block state define
     int twice_row, width_row, speed_row, reverse_row, pos_row;
+    twice_num = 5 + 3 * (df == INSANE);
+    width_num = 3;
+    speed_num = 2 + (df == INSANE);
+    reverse_num = 3;
+    pos_num = 3;
     for (i = 0; i < BLOCK_ROWS; i++) {
         twice_row = width_row = speed_row = reverse_row = pos_row = 1;
         for (j = 0; j < BLOCK_COLS; j++) {
@@ -169,7 +176,7 @@ static void block_init() {
                 continue;
             }
             rand_num = getrand();
-            switch (game_get_difficulty()) {
+            switch (df) {
                 // EASY: 特殊ブロック 硬度2倍, ラケット幅変更
                 case EASY:
                     if (rand_num > 7 + 2 * (i && (twice_num || width_num))) {
@@ -318,9 +325,11 @@ static void block_init() {
         }
     }
 
-    twice_num = 5;
-    speed_num = 2;
-    width_num = reverse_num = pos_num = 3;
+    twice_num = 5 + 3 * (df == INSANE);
+    width_num = 3;
+    speed_num = 2 + (df == INSANE);
+    reverse_num = 3;
+    pos_num = 3;
 
     // block draw
     for (i = 0; i < BLOCK_ROWS; i++) {

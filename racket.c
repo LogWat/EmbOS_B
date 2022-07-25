@@ -53,7 +53,7 @@ static void bounce_angle() {
 
 static void racket_init(int *x, int *y) {
     *x = LCD_WIDTH - 100; *y = LCD_HEIGHT - 30;
-    dx = 5 + (game_get_difficulty() == INSANE); dy = 0;
+    dx = 5 + 3 * (game_get_difficulty() == INSANE); dy = 0;
     r.x = *x; r.y = *y;
     r.width = 30; r.height = 5;
 }
@@ -86,7 +86,7 @@ void racket_step(void) {
         if (auto_flag) {
             b = ball_get_box();
             ball_dx = round_fix(ball_get_dx()), ball_dy = round_fix(ball_get_dy());
-            d_y = (ball_dy > 0) ? 5 : (r.y - b->y) / 4;
+            d_y = (ball_dy > 0) ? 5 - 3 * (game_get_difficulty() == INSANE) : (r.y - b->y) / 3;
             if (b->x + b->width / 2 + ball_dx * d_y > r.x + r.width - dx && r.x < LCD_WIDTH - r.width - dx) {
                 x += dx;
             } else if (b->x + b->width + ball_dx * d_y < r.x + dx && r.x > dx) {
