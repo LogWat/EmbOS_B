@@ -6,7 +6,15 @@ REVERSE：操作反転
 POS：ラケットのY座標を変更
 
 難易度
-EASY：特殊ブロックはTWICE WIDTH
+EASY：  特殊ブロックはTWICE WIDTH
 NORMAL：TWICE, WIDTH, SPEED
-HARD：TWICE, WIDTH, SPEED, REVERSE
-INSANE：TWICE，WIDTH, SPEED, REVERSE, POS 通常ボール速度上昇, ラケット幅減少 (難易度異常に付きプレイは非推奨)
+HARD：  TWICE, WIDTH, SPEED, REVERSE
+INSANE：TWICE，WIDTH, SPEED, REVERSE, POS 通常ボール速度上昇 (非常に難しい クリアは困難)
+
+WIDTHブロックと難易度によるラケット幅の変化(デフォルトは30)
+EASY:   WIDTHブロックは出現しない
+NORMAL: 20 ~ 50
+HARD:   10 ~ 50
+INSANE: 10 ~ 29 (増加することはない)
+
+更に，INSANEのみSPEEDブロックによるボールの速度上昇度合いが増す
