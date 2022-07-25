@@ -2,6 +2,9 @@
 #include "8x8.til"
 #include "game.h"
 #include "draw.h"
+#include "box.h"
+#include "block.h"
+#include "ball.h"
 
 #define COLOR_WHITE     BGR(31, 31, 31)
 #define COLOR_GRAY      BGR(15, 15, 15)
@@ -17,6 +20,8 @@
 /* draw.cではこのフラグが1だった場合には描写を行い，0にもどす．0だった場合には何もしない */
 /* そうすることで，何度も重ねて同じ描写を行わないようにする． */
 static int screen_changed = 1; // 最初は描写を行う(START画面)
+
+static int prev_rev_flag = 0; // 前ループでのrev_flag状態
 
 void screen_changed_flag_set(void) {
     screen_changed = 1;
@@ -148,6 +153,7 @@ void reset_screen(void)
 
 void draw_step() {
     hword *fb = (hword *)VRAM;
+    struct box *ball;
 
     if (screen_changed) reset_screen();
 
@@ -155,9 +161,24 @@ void draw_step() {
     case START:
         if (screen_changed) {
             reset_screen();
+            prev_rev_flag = 0;
         }
         break;
     case RUNNING:
+        if (prev_rev_flag != get_reverse_flag() && prev_rev_flag == 0) {
+            draw_string(fb, COLOR_PURPLE, "<->", 5, 0);
+            prev_rev_flag = get_reverse_flag();
+        } else if (prev_rev_flag != get_reverse_flag() && prev_rev_flag == 1) {
+            draw_string(fb, COLOR_BLACK, "<->", 5, 0);
+            prev_rev_flag = get_reverse_flag();
+        }
+        // ボールが表示域内にある場合は再描写
+        ball = ball_get_box();
+        if (get_reverse_flag() == 1) {
+            if (ball->x <= 5 + FONT_SIZE * 3 && ball->y <= FONT_SIZE + 1) {
+                draw_string(fb, COLOR_PURPLE, "<->", 5, 0);
+            }
+        }
         break;
     case DEAD:
         if (screen_changed) {
@@ -178,6 +199,10 @@ void draw_step() {
         }
         break;
     case RESTART:
+        if (screen_changed) {
+            reset_screen();
+            prev_rev_flag = 0;
+        }
         break;
     case HOME:
         if (screen_changed) {
