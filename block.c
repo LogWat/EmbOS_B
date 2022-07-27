@@ -61,6 +61,10 @@ static void redraw_box() {
     redraw.flag = 0;
 }
 
+int is_block_exist(int x, int y) {
+    return blocks[y][x] == '1' ? 1 : 0;
+}
+
 void all_flag_reset(void) {
     int i, j;
     for (i = 0; i < BLOCK_ROWS; i++) {
@@ -74,7 +78,7 @@ void all_flag_reset(void) {
     reverse_flag = 0;
 }
 
-static int hit(int x, int y) {
+int hit(int x, int y) {
     int i = x / BLOCK_WIDTH;
     int j = (y - BLOCK_TOP) / BLOCK_HEIGHT;
     if (i < 0 || i >= BLOCK_COLS || j < 0 || j >= BLOCK_ROWS) {
@@ -166,7 +170,7 @@ static void block_init() {
     int twice_row, width_row, speed_row, reverse_row, pos_row;
     twice_num = 5 + 3 * (df == INSANE);
     width_num = 3;
-    speed_num = 2 + (df == INSANE);
+    speed_num = 2;
     reverse_num = 3;
     pos_num = 3;
     for (i = 0; i < BLOCK_ROWS; i++) {
@@ -276,7 +280,7 @@ static void block_init() {
                 case INSANE:
                     if (rand_num > 9 + (i && (twice_num || width_num || speed_num || reverse_num || pos_num))) {
                         block_type[i][j] = DEFAULT;
-                    } else if (rand_num > 5 + (i && (width_num || speed_num || reverse_num || pos_num))) {
+                    } else if (rand_num > 6 + (i && (width_num || speed_num || reverse_num || pos_num))) {
                         if (twice_num && twice_row) {
                             block_type[i][j] = TWICE;
                             twice_num--;

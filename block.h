@@ -8,3 +8,5 @@ extern void speed_change(int speed);
 extern int get_speed_by_blocks(void);
 extern void reverse_toggle(void);
 extern int get_reverse_flag(void);
+extern int is_block_exist(int x, int y);
+extern int hit(int x, int y);
